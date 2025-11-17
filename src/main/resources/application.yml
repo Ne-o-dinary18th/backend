@@ -17,3 +17,16 @@ spring:
 springdoc:
   swagger-ui:
     path: /swagger-ui
+
+# AWS S3
+cloud:
+  aws:
+    region:
+      static: ${AWS_REGION}
+    s3:
+      bucket-name: ${AWS_S3_BUCKET}
+    credentials:
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    stack:
+      auto: false
