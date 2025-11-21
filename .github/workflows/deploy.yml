@@ -2,7 +2,7 @@ name: Deploy to EC2 (NEORDINARY)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "develop" ]
 
 jobs:
   build-and-deploy:
