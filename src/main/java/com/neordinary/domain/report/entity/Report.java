@@ -26,7 +26,7 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "tags_id", nullable = false)
     private Tag tag;
 
-    private Integer totalAmount; // 보고서 총합
+    private Long totalAmount; // 보고서 총합
     private LocalDate reportDate; // 보고서 생성 기준 날짜
 
     @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
