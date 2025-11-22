@@ -8,6 +8,8 @@ import com.neordinary.domain.tag.dto.TagResponseDto;
 import com.neordinary.domain.tag.dto.TagUserResponseDto;
 import com.neordinary.domain.tag.repository.TagRepository;
 import com.neordinary.domain.tag.repository.UserRepository;
+import com.neordinary.global.apiPayload.code.status.ErrorStatus;
+import com.neordinary.global.apiPayload.exception.GeneralException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -63,11 +65,11 @@ public class TagQueryService {
 
     public TagResponseDto.TagDetailDto getTagReceipts(Long tagId) {
         // find tag, users
-        var tag = tagRepository.findById(tagId).orElseThrow();
+        var tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
         List<User> users = userRepository.findUsersByTag_TagId(tagId);
         var userAmount = users.size();
 
-        // Todo: 에러 핸들러
         // find receipts
         var receipts =  receiptRepository.findReceiptsByTag_TagId(tagId);
 
