@@ -4,6 +4,8 @@ import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.User;
 import com.neordinary.domain.tag.repository.TagRepository;
 import com.neordinary.domain.tag.repository.UserRepository;
+import com.neordinary.global.apiPayload.code.status.ErrorStatus;
+import com.neordinary.global.apiPayload.exception.GeneralException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,15 @@ public class TagCommandService {
     private final UserRepository userRepository;
 
     public Tag createTag(String tagName) {
+        if (tagName == null || tagName.isBlank()) {
+            throw new GeneralException(ErrorStatus.TAG_NAME_REQUIRED);
+        }
+
+        // 태그명 중복 검사
+        if (tagRepository.existsByTitle(tagName)) {
+            throw new GeneralException(ErrorStatus.TAG_NAME_ALREADY_EXISTS);
+        }
+
         var tag = Tag.builder().title(tagName).build();
         tagRepository.save(tag);
         return tag;
@@ -21,8 +32,8 @@ public class TagCommandService {
 
     public User createUser(Long tagId, String userName) {
         // find tag
-        var tag = tagRepository.findById(tagId).get();
-        // Todo: 에러 처리
+        var tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
         var user = User
                 .builder()
                 .name(userName)
@@ -38,7 +49,16 @@ public class TagCommandService {
     }
 
     public Tag updateTag(Long tagId, String tagName) {
-        var tag = tagRepository.findById(tagId).get();
+        var tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
+        if (tagName == null || tagName.isBlank()) {
+            throw new GeneralException(ErrorStatus.TAG_NAME_REQUIRED);
+        }
+
+        if (tagRepository.existsByTitle(tagName)) {
+            throw new GeneralException(ErrorStatus.TAG_NAME_ALREADY_EXISTS);
+        }
+
         tag.setTitle(tagName);
         tagRepository.save(tag);
         return tag;
