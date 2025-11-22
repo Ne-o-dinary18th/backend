@@ -20,6 +20,7 @@ public class Report extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "reports_id")
     private Long reportId;
 
     @ManyToOne
