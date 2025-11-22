@@ -72,7 +72,7 @@ public class ReportService {
 
     public ReportDetailResponse getReport(Long reportId) {
         Report report = reportRepository.findById(reportId)
-                .orElseThrow(() -> new RuntimeException("Report not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
 
         return convertToDetail(report);
     }
