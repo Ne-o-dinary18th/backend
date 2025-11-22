@@ -10,6 +10,8 @@ import com.neordinary.domain.report.entity.Report;
 import com.neordinary.domain.report.repository.ReportRepository;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.repository.TagRepository;
+import com.neordinary.global.apiPayload.code.status.ErrorStatus;
+import com.neordinary.global.apiPayload.exception.GeneralException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -58,19 +60,26 @@ public class ReportService {
         return convertToDetail(report);
     }
 
+    // 태그가 존재하지않을 경우 : 예외처리 & 태그가 존재하는데 보고서 0개 : 빈배열
     public List<ReportTagFilterResponse> getReportsByTagId(Long tagId) {
 
+        // 태그 존재 여부 체크 (예외)
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
+
+        // 태그는 존재하지만 보고서가 없을 수 있음 → 정상, 빈 리스트 반환
         List<Report> reports = reportRepository.findAllByTag_TagId(tagId);
 
         return reports.stream()
                 .map(r -> ReportTagFilterResponse.builder()
                         .reportId(r.getReportId())
                         .reportDate(r.getReportDate())
-                        .tagName(r.getTag().getTitle())
+                        .tagName(tag.getTitle())
                         .totalAmount(r.getTotalAmount())
                         .build()
                 ).toList();
     }
+
 
     private ReportDetailResponse convertToDetail(Report report) {
 

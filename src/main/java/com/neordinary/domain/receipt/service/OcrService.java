@@ -1,10 +1,15 @@
 package com.neordinary.domain.receipt.service;
 
+import com.neordinary.global.apiPayload.code.status.ErrorStatus;
+import com.neordinary.global.apiPayload.exception.GeneralException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,15 +17,24 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class OcrService {
 
+    // 날짜가 형식에 맞는지 검증
+    private static final Pattern DATE_PATTERN =
+            Pattern.compile("(\\d{4}[./-]\\d{1,2}[./-]\\d{1,2})");
     // 정규식
     // 상호명, 총액, 일자
-    public String regularizate(String ocrText) {
+    public List<String> regularizate(String ocrText) {
         String store = findStoreText(ocrText);
         Integer totalAmount = findTotalAmount(ocrText);
         String dateTime = findDateTime(ocrText);
 
-        return store + totalAmount + dateTime;
+        String key = "찾을 수 없음.";
+        if(Objects.equals(store, key) || Objects.equals(dateTime, key)){
+            throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
+        } else if (Objects.equals(totalAmount, 0)) {
+            throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
+        }
 
+        return List.of(store, totalAmount.toString(), dateTime);
     }
 
     public String findStoreText(String text) {
@@ -41,7 +55,7 @@ public class OcrService {
             }
         }
 
-        return "찾을 수 없음."; // 없으면 null
+        return "찾을 수 없음."; // 없으면 경고 문구 반환
 
     }
 
@@ -101,10 +115,30 @@ public class OcrService {
                     trimmed.startsWith("일자") ||
                     trimmed.startsWith("승인일시")) {
 
-                return trimmed;   // 조건을 만족하면 바로 반환
+                Matcher matcher = DATE_PATTERN.matcher(trimmed);
+                if (matcher.find()) {
+                    String date =  matcher.group(1); // 날짜만 반환
+                    if (!isValidDate(date)) {
+                        throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
+                    }
+
+                    return date;
+                }
             }
         }
         return "찾을 수 없음.";
 
     }
+
+    private boolean isValidDate(String dateStr) {
+        // 형식에 맞는지 검증하고 올바른 날짜를 가지는지 계산
+        try {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy[-./]MM[-./]dd");
+            LocalDate.parse(dateStr.replace(".", "-").replace("/", "-"), fmt);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
+
