@@ -27,11 +27,16 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "tags_id", nullable = false)
     private Tag tag;
 
-    private Long totalAmount; // 보고서 총합
+    private Long totalAmount; // 보고서에 있는 영수증내 가격 총합
     private LocalDate reportDate; // 보고서 생성 기준 날짜
 
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReportReceipt> reportReceipts = new ArrayList<>();
+
+    public void addReportReceipt(ReportReceipt rr) {
+        reportReceipts.add(rr);
+        rr.setReport(this);
+    }
 }
 
 

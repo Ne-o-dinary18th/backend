@@ -14,6 +14,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,7 +27,6 @@ public class ReportService {
     private final ReceiptRepository receiptRepository;
     private final ReportRepository reportRepository;
 
-    // 보고서 생성
     public Long createReport(ReportCreateRequest request) {
 
         Tag tag = tagRepository.findById(request.getTagId())
@@ -36,21 +36,22 @@ public class ReportService {
 
         Report report = Report.builder()
                 .tag(tag)
-                .totalAmount(
-                        receipts.stream().mapToLong(Receipt::getTotalAmount).sum()
-                )
+                .totalAmount(receipts.stream()
+                        .mapToLong(Receipt::getTotalAmount).sum())
+                .reportDate(LocalDate.now())
                 .reportReceipts(new ArrayList<>())
                 .build();
 
+        reportRepository.save(report);
+
         for (Receipt r : receipts) {
             ReportReceipt rr = ReportReceipt.builder()
-                    .report(report)
                     .storeName(r.getStoreName())
                     .date(r.getPurchaseDate())
                     .totalPrice(r.getTotalAmount())
                     .build();
 
-            report.getReportReceipts().add(rr);
+            report.addReportReceipt(rr);   // 양방향 연결
         }
 
         reportRepository.save(report);
@@ -58,16 +59,12 @@ public class ReportService {
         return report.getReportId();
     }
 
-    // 보고서 전체 조회
     public List<ReportDetailResponse> getAllReports() {
-        List<Report> reports = reportRepository.findAll();
-
-        return reports.stream()
+        return reportRepository.findAll().stream()
                 .map(this::convertToDetail)
                 .toList();
     }
 
-    //보고서 개별 조회
     public ReportDetailResponse getReport(Long reportId) {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
@@ -75,15 +72,12 @@ public class ReportService {
         return convertToDetail(report);
     }
 
-    // Report 엔티티 → ReportDetailResponse 변환
     private ReportDetailResponse convertToDetail(Report report) {
-
-        Tag tag = report.getTag();
 
         return ReportDetailResponse.builder()
                 .reportId(report.getReportId())
-                .tagName(tag.getTitle())
-                .reportDate(report.getCreatedAt().toLocalDate())
+                .tagName(report.getTag().getTitle())
+                .reportDate(report.getReportDate())
                 .totalAmount(report.getTotalAmount())
                 .receipts(
                         report.getReportReceipts().stream()
@@ -97,5 +91,4 @@ public class ReportService {
                 )
                 .build();
     }
-
 }
