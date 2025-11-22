@@ -45,6 +45,9 @@ public class TagCommandService {
 
     // 태그 삭제 api
     public void deleteTag(Long tagId) {
+        var tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
+
         tagRepository.deleteById(tagId);
     }
 

@@ -43,10 +43,6 @@ public class TagController {
     @Operation(summary = "태그 조회 API", description = "태그 전체 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4001", description = "태그 생성에 실패했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4003", description = "태그명은 필수입니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
     })
     @GetMapping("/all")
     public ApiResponse<TagResponseDto.TagListDto> getAllTags() {
@@ -64,8 +60,6 @@ public class TagController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4001", description = "태그 생성에 실패했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4003", description = "태그명은 필수입니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
     })
     @PostMapping("/{tagId}/user")
     public ApiResponse<?> createTagUser(
@@ -81,9 +75,7 @@ public class TagController {
     @Operation(summary = "태그의 유저 조회 API", description = "태그의 유저 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
 
     })
     @GetMapping("/{tagId}/user")
@@ -101,9 +93,7 @@ public class TagController {
     @Operation(summary = "태그 상세 조회 API", description = "태그 상세 내용 + 영수증 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
 
     })
     @GetMapping("/{tagId}/detail")
@@ -122,9 +112,6 @@ public class TagController {
     @Operation(summary = "태그-영수증들 조회 API", description = "메인페이지 태그 + 영수증들 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
 
     })
     @GetMapping("/receipt/all")
@@ -140,9 +127,8 @@ public class TagController {
     @Operation(summary = "태그 삭제 API", description = "테그 삭제 api")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4005", description = "해당 태그를 삭제할 수 없습니다."),
 
     })
     @DeleteMapping("/{tagId}")
