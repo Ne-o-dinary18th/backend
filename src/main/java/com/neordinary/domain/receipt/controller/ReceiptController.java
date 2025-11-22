@@ -40,9 +40,11 @@ public class ReceiptController {
      */
     @PostMapping("/receipts/upload")
     public ApiResponse<ReceiptResponse.UploadDTO> uploadReceipt(
-            @RequestBody @Valid ReceiptRequest.UploadDTO dto
+            @RequestParam Long tagId,
+//            @RequestBody ReceiptRequest.OcrTextRequest ocrText
+            @RequestBody String ocrText
     ){
-        return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(dto));
+        return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(tagId, ocrText));
     }
 
     /**

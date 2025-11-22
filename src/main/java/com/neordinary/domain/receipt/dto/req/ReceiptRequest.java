@@ -9,6 +9,14 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class ReceiptRequest {
+
+    @Getter
+    @AllArgsConstructor
+    public static class OcrTextRequest {
+        // 태그
+        String text;
+    }
+
     @Getter
     @AllArgsConstructor
     public static class UploadDTO{
