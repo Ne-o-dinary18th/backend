@@ -116,17 +116,18 @@ public class OcrService {
                     trimmed.startsWith("일자") ||
                     trimmed.startsWith("승인일시")) {
 
-                // 1. yyyy-mm-dd에 맞는지 검증
-                Matcher matcher = DATE_PATTERN.matcher(trimmed);
-                if (matcher.find()) {
-                    String date =  matcher.group(1); // 날짜만 반환
-                    // 2. 24시간, 365일 내에 들어오는지 검증
-                    if (!isValidDate(date)) {
-                        throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
-                    }
-
-                    return date;
-                }
+//                // 1. yyyy-mm-dd에 맞는지 검증
+//                Matcher matcher = DATE_PATTERN.matcher(trimmed);
+//                if (matcher.find()) {
+//                    String date =  matcher.group(1); // 날짜만 반환
+//                    // 2. 24시간, 365일 내에 들어오는지 검증
+//                    if (!isValidDate(date)) {
+//                        throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
+//                    }
+//
+//                    return date;
+//                }
+                return trimmed;
             }
         }
         return "찾을 수 없음.";
