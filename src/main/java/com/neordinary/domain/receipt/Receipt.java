@@ -1,5 +1,6 @@
 package com.neordinary.domain.receipt;
 
+import com.neordinary.domain.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-public class Receipt {
+public class Receipt extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

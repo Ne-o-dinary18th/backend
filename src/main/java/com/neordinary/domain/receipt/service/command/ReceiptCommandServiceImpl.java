@@ -25,14 +25,5 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
         return ReceiptConverter.toUploadDTO(entity);
     }
 
-    @Override
-    public Receipt getReceipt(Long receiptId) {
-        Optional<Receipt> findReceipt = receiptRepository.findById(receiptId);
-        return findReceipt.orElse(null);
-    }
 
-    @Override
-    public List<Receipt> getAllReceipt() {
-        return receiptRepository.findAll();
-    }
 }

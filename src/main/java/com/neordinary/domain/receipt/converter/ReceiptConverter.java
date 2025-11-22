@@ -10,7 +10,7 @@ public class ReceiptConverter {
     public static ReceiptResponse.UploadDTO toUploadDTO(
             Receipt entity
     ){
-        ReceiptResponse.UploadDTO.builder()
+        return ReceiptResponse.UploadDTO.builder()
                 .receiptId(entity.getReceiptId())
                 .build();
     }

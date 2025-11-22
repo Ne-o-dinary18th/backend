@@ -30,12 +30,12 @@ public class ReceiptController {
     public ApiResponse<Receipt> getReceipt(
             @PathVariable Long receiptId
     ){
-       return ApiResponse.onSuccess(receiptCommandService.getReceipt(receiptId));
+       return ApiResponse.onSuccess(receiptQueryService.getReceipt(receiptId));
     }
 
     @GetMapping("/receipts/all")
     public ApiResponse<List<Receipt>> getTotalAmount(){
-        return ApiResponse.onSuccess(receiptCommandService.getAllReceipt());
+        return ApiResponse.onSuccess(receiptQueryService.getAllReceipt());
     }
 
     @DeleteMapping("/receipts/{receiptId}")
