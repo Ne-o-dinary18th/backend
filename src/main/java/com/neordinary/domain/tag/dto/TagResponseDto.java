@@ -1,16 +1,16 @@
 package com.neordinary.domain.tag.dto;
 
-import com.neordinary.domain.tag.Tag;
 import lombok.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
+@Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class TagResponseDto {
 
     @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static class TagDto {
         Long tagId;
         String tagName;
@@ -26,14 +26,11 @@ public class TagResponseDto {
     }
 
     @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
     public static class TagListDto {
         List<TagDto> tags;
     }
-
-    /**
-     * 모든 태그 조회 dto
-     *
-     * */
 
 
 }

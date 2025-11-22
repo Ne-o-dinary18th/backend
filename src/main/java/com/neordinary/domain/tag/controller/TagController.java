@@ -1,6 +1,7 @@
 package com.neordinary.domain.tag.controller;
 
 import com.neordinary.domain.tag.dto.TagResponseDto;
+import com.neordinary.domain.tag.dto.TagUserResponseDto;
 import com.neordinary.domain.tag.service.TagCommandService;
 import com.neordinary.domain.tag.service.TagQueryService;
 import com.neordinary.global.apiPayload.ApiResponse;
@@ -67,7 +68,7 @@ public class TagController {
     })
     @PostMapping("/{tagId}/user")
     public ApiResponse<?> createTagUser(
-            @RequestParam(defaultValue = "태그", required = false, name = "tagId") String tagId,
+            @PathVariable Long tagId,
             @RequestParam(defaultValue = "사용자1", required = false, name = "userName") String userName
     ) {
         return ApiResponse.onSuccess(tagCommandService.createUser(tagId, userName));
@@ -85,8 +86,8 @@ public class TagController {
 
     })
     @GetMapping("/{tagId}/user")
-    public ApiResponse<?> createTagUser(
-            @RequestParam(defaultValue = "태그", required = false, name = "tagId") String tagId
+    public ApiResponse<TagUserResponseDto.TagUserListDto> createTagUser(
+            @PathVariable Long tagId
     ) {
         return ApiResponse.onSuccess(tagQueryService.getTagUsers(tagId));
     }
