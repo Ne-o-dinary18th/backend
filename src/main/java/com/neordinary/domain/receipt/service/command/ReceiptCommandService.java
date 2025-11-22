@@ -10,6 +10,6 @@ public interface ReceiptCommandService {
 
     public ReceiptResponse.UploadDTO uploadReceipt(ReceiptRequest.UploadDTO dto);
 
-    // public Receipt deleteReceipt();
+    public Long deleteReceipt(Long receiptId);
 
 }

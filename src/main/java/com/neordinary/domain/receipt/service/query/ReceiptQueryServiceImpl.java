@@ -14,14 +14,19 @@ public class ReceiptQueryServiceImpl implements ReceiptQueryService{
 
     private static ReceiptRepository receiptRepository;
 
+    // 영수증 조회하기
     @Override
     public Receipt getReceipt(Long receiptId) {
         Optional<Receipt> findReceipt = receiptRepository.findById(receiptId);
         return findReceipt.orElse(null);
     }
 
+    // 영수증 총액 계산
     @Override
-    public List<Receipt> getAllReceipt() {
-        return receiptRepository.findAll();
+    public Long getTotalAmount(List<Long> receiptIds) {
+        List<Receipt> receipts = receiptRepository.findAllById(receiptIds);
+        return receipts.stream()
+                .mapToLong(Receipt::getTotalAmount)
+                .sum();
     }
 }

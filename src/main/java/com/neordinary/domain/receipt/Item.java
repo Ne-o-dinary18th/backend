@@ -1,6 +1,7 @@
 package com.neordinary.domain.receipt;
 
 import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 

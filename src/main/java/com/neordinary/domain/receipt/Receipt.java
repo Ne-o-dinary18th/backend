@@ -1,6 +1,7 @@
 package com.neordinary.domain.receipt;
 
 import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,4 +30,8 @@ public class Receipt extends BaseEntity {
 
     @Column
     private String imageUrl; // 영수증사진Url
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tags_id")
+    private Tag tag;
 }

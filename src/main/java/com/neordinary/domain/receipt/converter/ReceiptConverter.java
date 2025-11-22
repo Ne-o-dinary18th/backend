@@ -3,6 +3,7 @@ package com.neordinary.domain.receipt.converter;
 import com.neordinary.domain.receipt.Receipt;
 import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
+import com.neordinary.domain.tag.Tag;
 
 public class ReceiptConverter {
 
@@ -17,12 +18,14 @@ public class ReceiptConverter {
 
     // DTO -> entity
     public static Receipt toReceipt(
-            ReceiptRequest.UploadDTO dto
+            ReceiptRequest.UploadDTO dto,
+            Tag tag
     ){
         return Receipt.builder()
                 .storeName(dto.storeName)
                 .purchaseDate(dto.purchaseDate)
                 .totalAmount(dto.totalAmount)
+                .tag(tag)
                 .build();
     }
 }
