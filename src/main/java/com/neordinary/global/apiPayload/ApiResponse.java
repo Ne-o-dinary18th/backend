@@ -33,4 +33,7 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> onFailure(String code, String message, T data){
         return new ApiResponse<>(false, code, message, data);
     }
+    public static <String> ApiResponse<String> onSuccessWithoutResult(){
+        return new ApiResponse<String>(true, SuccessStatus._OK.getCode(), SuccessStatus._OK.getMessage(), (String) "success");
+    }
 }

@@ -1,18 +1,18 @@
 package com.neordinary.global.apiPayload.code;
 
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@Builder
+@AllArgsConstructor
 public class ErrorReasonDTO {
-
+    private String code;
+    private String message;
     private HttpStatus httpStatus;
 
-    private final boolean isSuccess;
-    private final String code;
-    private final String message;
-
-    public boolean getIsSuccess(){return isSuccess;}
+    public ErrorReasonDTO(String code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 }

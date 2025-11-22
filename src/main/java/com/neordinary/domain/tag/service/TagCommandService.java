@@ -31,4 +31,17 @@ public class TagCommandService {
         userRepository.save(user);
         return user;
     }
+
+    // 태그 삭제 api
+    public void deleteTag(Long tagId) {
+        tagRepository.deleteById(tagId);
+    }
+
+    public Tag updateTag(Long tagId, String tagName) {
+        var tag = tagRepository.findById(tagId).get();
+        tag.setTitle(tagName);
+        tagRepository.save(tag);
+        return tag;
+
+    }
 }
