@@ -3,6 +3,8 @@ name: Deploy to EC2 (NEORDINARY)
 on:
   push:
     branches: [ "develop" ]
+    pull_request:
+      branches: [ "develop" ]
 
 jobs:
   build-and-deploy:
