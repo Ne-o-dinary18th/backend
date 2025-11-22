@@ -5,6 +5,7 @@ import com.neordinary.domain.receipt.converter.ReceiptConverter;
 import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
 import com.neordinary.domain.receipt.repository.ReceiptRepository;
+import com.neordinary.domain.receipt.service.OcrService;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.repository.TagRepository;
 import com.neordinary.global.apiPayload.code.status.ErrorStatus;
@@ -21,13 +22,20 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
 
     private final ReceiptRepository receiptRepository;
     private final TagRepository tagRepository;
+    private final OcrService ocrService;
 
     @Override
-    public ReceiptResponse.UploadDTO uploadReceipt(ReceiptRequest.UploadDTO dto){
-        Tag tag = tagRepository.findById(dto.tagId)
+    public ReceiptResponse.UploadDTO uploadReceipt(Long tagId, String ocrText){
+        Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
-        Receipt entity = ReceiptConverter.toReceipt(dto, tag);
 
+        // convert ocr
+        String store = ocrService.findStoreText(ocrText);
+        String purchaseDate = ocrService.findDateTime(ocrText);
+        Integer totalPrice = ocrService.findTotalAmount(ocrText);
+
+        // entity save
+        Receipt entity = ReceiptConverter.toReceipt(store, purchaseDate, totalPrice, tag);
         receiptRepository.save(entity);
 
         return ReceiptConverter.toUploadDTO(entity);
