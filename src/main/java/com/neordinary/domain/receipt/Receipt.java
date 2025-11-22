@@ -1,5 +1,7 @@
 package com.neordinary.domain.receipt;
 
+import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +13,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
-public class Receipt {
+public class Receipt extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,4 +30,8 @@ public class Receipt {
 
     @Column
     private String imageUrl; // 영수증사진Url
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tags_id")
+    private Tag tag;
 }

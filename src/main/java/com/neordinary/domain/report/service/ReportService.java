@@ -6,7 +6,6 @@ import com.neordinary.domain.report.dto.ReportCreateRequest;
 import com.neordinary.domain.report.dto.ReportDetailResponse;
 import com.neordinary.domain.report.dto.ReportReceiptResponse;
 import com.neordinary.domain.report.entity.Report;
-import com.neordinary.domain.report.entity.ReportReceipt;
 import com.neordinary.domain.report.repository.ReportRepository;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.repository.TagRepository;
@@ -15,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,23 +34,10 @@ public class ReportService {
 
         Report report = Report.builder()
                 .tag(tag)
-                .totalAmount(receipts.stream()
-                        .mapToLong(Receipt::getTotalAmount).sum())
                 .reportDate(LocalDate.now())
-                .reportReceipts(new ArrayList<>())
+                .totalAmount(receipts.stream().mapToLong(Receipt::getTotalAmount).sum())
+                .receipts(receipts)
                 .build();
-
-        reportRepository.save(report);
-
-        for (Receipt r : receipts) {
-            ReportReceipt rr = ReportReceipt.builder()
-                    .storeName(r.getStoreName())
-                    .date(r.getPurchaseDate())
-                    .totalPrice(r.getTotalAmount())
-                    .build();
-
-            report.addReportReceipt(rr);   // 양방향 연결
-        }
 
         reportRepository.save(report);
 
@@ -80,12 +65,12 @@ public class ReportService {
                 .reportDate(report.getReportDate())
                 .totalAmount(report.getTotalAmount())
                 .receipts(
-                        report.getReportReceipts().stream()
-                                .map(rr -> ReportReceiptResponse.builder()
-                                        .receiptId(rr.getId())
-                                        .amount(rr.getTotalPrice())
-                                        .date(rr.getDate())
-                                        .storeName(rr.getStoreName())
+                        report.getReceipts().stream()
+                                .map(r -> ReportReceiptResponse.builder()
+                                        .receiptId(r.getReceiptId())       // Receipt PK
+                                        .amount(r.getTotalAmount())       // 총 금액
+                                        .date(r.getPurchaseDate())        // 사용일자
+                                        .storeName(r.getStoreName())      // 상호명
                                         .build()
                                 ).toList()
                 )

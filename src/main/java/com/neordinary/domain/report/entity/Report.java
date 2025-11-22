@@ -1,6 +1,7 @@
 package com.neordinary.domain.report.entity;
 
 import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.receipt.Receipt;
 import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,16 +28,16 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "tags_id", nullable = false)
     private Tag tag;
 
-    private Long totalAmount; // 보고서에 있는 영수증내 가격 총합
-    private LocalDate reportDate; // 보고서 생성 기준 날짜
+    private Long totalAmount;
+    private LocalDate reportDate;
 
-    @OneToMany(mappedBy = "report", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReportReceipt> reportReceipts = new ArrayList<>();
-
-    public void addReportReceipt(ReportReceipt rr) {
-        reportReceipts.add(rr);
-        rr.setReport(this);
-    }
+    @ManyToMany
+    @JoinTable(
+            name = "report_receipt",   // 새 조인 테이블
+            joinColumns = @JoinColumn(name = "report_id"),
+            inverseJoinColumns = @JoinColumn(name = "receipt_id")
+    )
+    private List<Receipt> receipts = new ArrayList<>();
 }
 
 
