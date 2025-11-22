@@ -36,4 +36,12 @@ public class TagCommandService {
     public void deleteTag(Long tagId) {
         tagRepository.deleteById(tagId);
     }
+
+    public Tag updateTag(Long tagId, String tagName) {
+        var tag = tagRepository.findById(tagId).get();
+        tag.setTitle(tagName);
+        tagRepository.save(tag);
+        return tag;
+
+    }
 }

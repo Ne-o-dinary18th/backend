@@ -153,4 +153,26 @@ public class TagController {
         return ApiResponse.onSuccessWithoutResult();
     }
 
+    /*
+     * patch /api/tag/{tagId}
+     * 태그 수정 api
+     *
+     * */
+    @Operation(summary = "태그 수정 API", description = "테그 수정 api")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+
+    })
+    @PatchMapping("/{tagId}")
+    public ApiResponse<?> updateTag(
+            @PathVariable Long tagId,
+            @RequestParam(defaultValue = "태그999", required = false, name = "tagName") String tagName
+    ) {
+
+        return ApiResponse.onSuccess(tagCommandService.updateTag(tagId, tagName));
+    }
+
 }
