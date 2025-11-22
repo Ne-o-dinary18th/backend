@@ -17,8 +17,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReceiptCommandServiceImpl implements ReceiptCommandService{
 
-    private static ReceiptRepository receiptRepository;
-    private static TagRepository tagRepository;
+    private final ReceiptRepository receiptRepository;
+    private final TagRepository tagRepository;
 
     @Override
     public ReceiptResponse.UploadDTO uploadReceipt(ReceiptRequest.UploadDTO dto){
