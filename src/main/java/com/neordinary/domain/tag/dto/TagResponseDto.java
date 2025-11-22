@@ -1,6 +1,7 @@
 package com.neordinary.domain.tag.dto;
 
 import lombok.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
@@ -32,5 +33,35 @@ public class TagResponseDto {
         List<TagDto> tags;
     }
 
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class ReceiptDto {
+        Long receiptId;
+        String storeName;
+        LocalDate purchaseDate; // 일자
+        Long totalAmount;
 
+        public static TagResponseDto.ReceiptDto convertToTagDetail(
+                Long receiptId, String storeName, LocalDate purchaseDate, Long totalAmount) {
+            return ReceiptDto.builder()
+                    .receiptId(receiptId)
+                    .storeName(storeName)
+                    .purchaseDate(purchaseDate)
+                    .totalAmount(totalAmount)
+                    .build();
+
+        }
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class TagDetailDto {
+        Long tagId;
+        String tagName;
+        Integer totalAmount;
+        Integer totalUsers;
+        List<ReceiptDto> receipts;
+    }
 }

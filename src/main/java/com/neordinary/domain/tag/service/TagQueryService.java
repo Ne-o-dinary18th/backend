@@ -1,5 +1,6 @@
 package com.neordinary.domain.tag.service;
 
+import com.neordinary.domain.receipt.repository.ReceiptRepository;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.User;
 import com.neordinary.domain.tag.dto.TagResponseDto;
@@ -15,6 +16,7 @@ import java.util.List;
 public class TagQueryService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
+    private final ReceiptRepository receiptRepository;
 
     public TagResponseDto.TagListDto retrieveAllTags() {
         // find tags
@@ -55,5 +57,20 @@ public class TagQueryService {
                 .tagName(tag.getTitle())
                 .tagUsers(tagUserDtos)
                 .build();
+    }
+
+    public TagResponseDto.TagDetailDto getTagReceipts(Long tagId) {
+        // find tag, users
+        var tag = tagRepository.findById(tagId).orElseThrow();
+        List<User> users = userRepository.findUsersByTag_TagId(tagId);
+        var userAmount = users.size();
+
+       //  List<TagResponseDto.ReceiptDto> receiptDtos =  receiptRepository.findReceiptsByTa
+        return null;
+
+
+        // find receipts
+
+        // wrap list
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-
 @RequestMapping("/api/tag")
 public class TagController {
 
@@ -90,6 +89,25 @@ public class TagController {
             @PathVariable Long tagId
     ) {
         return ApiResponse.onSuccess(tagQueryService.getTagUsers(tagId));
+    }
+
+    /*
+     * /api/tag/{tagId}/detail
+     * 태그 상세페이지 조회 api
+     * */
+    @Operation(summary = "태그 상세 조회 API", description = "태그 상세 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+
+    })
+    @GetMapping("/{tagId}/detail")
+    public ApiResponse<TagResponseDto.TagDetailDto> getDetailTagPage(
+            @PathVariable Long tagId
+    ) {
+        return ApiResponse.onSuccess(tagQueryService.getTagReceipts(tagId));
     }
 
 
