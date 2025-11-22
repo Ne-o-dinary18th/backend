@@ -18,13 +18,15 @@ public class ReceiptConverter {
 
     // DTO -> entity
     public static Receipt toReceipt(
-            ReceiptRequest.UploadDTO dto,
+            String storeName,
+            String purchaseDateString,
+            Integer totalAmount,
             Tag tag
     ){
         return Receipt.builder()
-                .storeName(dto.storeName)
-                .purchaseDate(dto.purchaseDate)
-                .totalAmount(dto.totalAmount)
+                .storeName(storeName)
+                .purchaseDate(purchaseDateString)
+                .totalAmount(Long.valueOf(totalAmount))
                 .tag(tag)
                 .build();
     }

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface ReceiptCommandService {
 
-    public ReceiptResponse.UploadDTO uploadReceipt(ReceiptRequest.UploadDTO dto);
+    public ReceiptResponse.UploadDTO uploadReceipt(Long tagId, String ocrText);
 
     public Long deleteReceipt(Long receiptId);
 
