@@ -8,7 +8,6 @@ import lombok.Getter;
 public class OcrExpenseResponse {
 
     private Long expenseId;
-    private String storeName;
     private String date;
     private Integer totalPrice;
 }
