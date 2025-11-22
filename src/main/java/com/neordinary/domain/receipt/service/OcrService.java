@@ -17,9 +17,10 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class OcrService {
 
-    // 날짜가 형식에 맞는지 검증
+    // 날짜가 yyyy-mm-dd 형식에 맞는지 검증
     private static final Pattern DATE_PATTERN =
             Pattern.compile("(\\d{4}[./-]\\d{1,2}[./-]\\d{1,2})");
+
     // 정규식
     // 상호명, 총액, 일자
     public List<String> regularizate(String ocrText) {
@@ -115,9 +116,11 @@ public class OcrService {
                     trimmed.startsWith("일자") ||
                     trimmed.startsWith("승인일시")) {
 
+                // 1. yyyy-mm-dd에 맞는지 검증
                 Matcher matcher = DATE_PATTERN.matcher(trimmed);
                 if (matcher.find()) {
                     String date =  matcher.group(1); // 날짜만 반환
+                    // 2. 24시간, 365일 내에 들어오는지 검증
                     if (!isValidDate(date)) {
                         throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
                     }
@@ -133,8 +136,8 @@ public class OcrService {
     private boolean isValidDate(String dateStr) {
         // 형식에 맞는지 검증하고 올바른 날짜를 가지는지 계산
         try {
-            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy[-./]MM[-./]dd");
-            LocalDate.parse(dateStr.replace(".", "-").replace("/", "-"), fmt);
+            String normalized = dateStr.replace(".", "-").replace("/", "-");
+            LocalDate.parse(normalized, DateTimeFormatter.ISO_LOCAL_DATE);
             return true;
         } catch (Exception e) {
             return false;
