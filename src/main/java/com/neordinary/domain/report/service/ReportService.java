@@ -28,7 +28,7 @@ public class ReportService {
     private final ReceiptRepository receiptRepository;
     private final ReportRepository reportRepository;
 
-    public Long createReport(ReportCreateRequest request) {
+    public Long createReport(ReportCreateRequest request) { // 태그내에 해당 영수증 번호가 없을경우 예외처리는?흐린눈?
 
         Tag tag = tagRepository.findById(request.getTagId())
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
