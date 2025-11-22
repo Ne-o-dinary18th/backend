@@ -1,31 +1,31 @@
 package com.neordinary.domain.receipt;
 
-
-import com.neordinary.domain.common.BaseEntity;
-import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDate;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
+@Setter
 @Builder
-@Table(name = "receipts")
-public class Receipt extends BaseEntity {
+public class Receipt {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "receipts_id")
-    private Long receiptId;
+    private Long receiptId; // 영수증 아이디
 
-    private String storeName;
-    private LocalDate purchaseDate;
-    private Long totalAmount;
-    private String imageUrl;
+    @Column
+    private String storeName; // 상호명
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tags_id", nullable = false)
-    private Tag tag;
+    @Column
+    private LocalDate purchaseDate; // 일자
+
+    @Column
+    private Long totalAmount; // 총액
+
+    @Column
+    private String imageUrl; // 영수증사진Url
 }
