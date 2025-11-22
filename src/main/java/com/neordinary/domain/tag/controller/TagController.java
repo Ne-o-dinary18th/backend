@@ -1,0 +1,53 @@
+package com.neordinary.domain.tag.controller;
+
+import com.neordinary.domain.tag.dto.TagResponseDto;
+import com.neordinary.domain.tag.service.TagCommandService;
+import com.neordinary.domain.tag.service.TagQueryService;
+import com.neordinary.global.apiPayload.ApiResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+
+@RequestMapping("/api/tag")
+public class TagController {
+
+    final public TagQueryService tagQueryService;
+    final public TagCommandService tagCommandService;
+
+    @Operation(summary = "태그 생성 API", description = "태그 생성 API")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+
+    })
+    @PostMapping("/upload")
+    public ApiResponse<?> createTag(
+            @RequestParam(defaultValue = "tag1", required = false, name = "tagName") String tagName
+
+    ) {
+        return ApiResponse.onSuccess(tagCommandService.createTag(tagName));
+    }
+
+    /*
+    * 태그 조회 api
+    * */
+    @Operation(summary = "태그 조회 API", description = "태그 전체 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "", description = "유효하지 않은 id값입니다.")
+
+    })
+    @GetMapping("/all")
+    public ApiResponse<TagResponseDto.TagListDto> getAllTags() {
+        return ApiResponse.onSuccess(tagQueryService.retrieveAllTags());
+    }
+
+
+
+}
