@@ -1,8 +1,5 @@
 package com.neordinary.domain.report.controller;
 
-import com.neordinary.domain.report.dto.OcrExpenseRequest;
-import com.neordinary.domain.report.dto.OcrExpenseResponse;
-import com.neordinary.domain.report.service.ExpenseOcrService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

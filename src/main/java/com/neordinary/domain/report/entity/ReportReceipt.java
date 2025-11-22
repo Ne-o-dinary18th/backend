@@ -1,16 +1,17 @@
 package com.neordinary.domain.report.entity;
 
-import com.neordinary.domain.receipt.Receipt;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
-@Table(name = "report_receipts")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "report_receipts")
 public class ReportReceipt {
 
     @Id
@@ -21,6 +22,8 @@ public class ReportReceipt {
     @JoinColumn(name = "report_id")
     private Report report;
 
-    @ManyToOne @JoinColumn(name = "receipt_id")
-    private Receipt receipt;
+    private String storeName;
+    private LocalDate date;
+    private Integer totalPrice;
 }
+
