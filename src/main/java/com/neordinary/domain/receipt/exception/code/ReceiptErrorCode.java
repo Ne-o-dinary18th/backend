@@ -1,3 +1,4 @@
+/*
 package com.neordinary.domain.receipt.exception.code;
 
 import com.neordinary.global.apiPayload.code.BaseErrorCode;
@@ -15,3 +16,4 @@ public enum ReceiptErrorCode implements BaseErrorCode {
     private final HttpStatus reasonHttpStatus;
     private final ReasonDTO reason;
 }
+*/
