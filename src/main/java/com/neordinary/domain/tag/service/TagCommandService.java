@@ -7,4 +7,8 @@ public class TagCommandService {
     public Object createTag(String tagName) {
         return null;
     }
+
+    public Object createUser(String tagId, String userName) {
+        return null;
+    }
 }

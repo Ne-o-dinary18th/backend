@@ -35,19 +35,61 @@ public class TagController {
     }
 
     /*
+    * /api/tag/all
     * 태그 조회 api
     * */
     @Operation(summary = "태그 조회 API", description = "태그 전체 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "", description = "유효하지 않은 id값입니다.")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
 
     })
     @GetMapping("/all")
     public ApiResponse<TagResponseDto.TagListDto> getAllTags() {
-        return ApiResponse.onSuccess(tagQueryService.retrieveAllTags());
+         return ApiResponse.onSuccess(tagQueryService.retrieveAllTags());
     }
 
+     /**
+     * /api/tag/{tagId}/user
+     * 태그의 유저 생성 api
+     *
+     * */
+
+    @Operation(summary = "태그의 유저 생성 API", description = "태그의 유저 생성")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+
+    })
+    @PostMapping("/{tagId}/user")
+    public ApiResponse<?> createTagUser(
+            @RequestParam(defaultValue = "태그", required = false, name = "tagId") String tagId,
+            @RequestParam(defaultValue = "사용자1", required = false, name = "userName") String userName
+    ) {
+        return ApiResponse.onSuccess(tagCommandService.createUser(tagId, userName));
+    }
+    /**
+     * /api/tag/{tagId}/user
+     * 태그의 유저 조회 api
+     * */
+    @Operation(summary = "태그의 유저 조회 API", description = "태그의 유저 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+
+    })
+    @GetMapping("/{tagId}/user")
+    public ApiResponse<?> createTagUser(
+            @RequestParam(defaultValue = "태그", required = false, name = "tagId") String tagId
+    ) {
+        return ApiResponse.onSuccess(tagQueryService.getTagUsers(tagId));
+    }
 
 
 }
