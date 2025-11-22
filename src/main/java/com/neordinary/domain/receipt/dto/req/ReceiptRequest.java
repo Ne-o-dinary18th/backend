@@ -13,17 +13,11 @@ public class ReceiptRequest {
     @AllArgsConstructor
     public static class UploadDTO{
         // 태그 ID
-        @NotNull(message = "tagId는 필수입니다.")
         public Long tagId;
 
         // 영수증 OCR 파싱 값
-        @NotBlank(message = "storeName은 필수입니다.")
         public String storeName;
-
-        @NotNull(message = "purchaseDate는 필수입니다.")
         public String purchaseDate;
-
-        @NotNull(message = "totalAmount는 필수입니다.")
         public Long totalAmount;
     }
 }

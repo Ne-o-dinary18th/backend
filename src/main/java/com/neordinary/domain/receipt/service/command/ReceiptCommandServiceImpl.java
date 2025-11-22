@@ -22,17 +22,41 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
     private final ReceiptRepository receiptRepository;
     private final TagRepository tagRepository;
 
+    /** 영수증 업로드 메소드*/
     @Override
     public ReceiptResponse.UploadDTO uploadReceipt(ReceiptRequest.UploadDTO dto){
-        Tag tag = tagRepository.findById(dto.tagId)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
-        Receipt entity = ReceiptConverter.toReceipt(dto, tag);
 
-        receiptRepository.save(entity);
+        try {
+            Tag tag = tagRepository.findById(dto.tagId)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
+            Receipt entity = ReceiptConverter.toReceipt(dto, tag);
 
-        return ReceiptConverter.toUploadDTO(entity);
+            validateUploadDto(dto);
+
+            receiptRepository.save(entity);
+
+            return ReceiptConverter.toUploadDTO(entity);
+        } catch (GeneralException e){
+            throw e; // 의도된 예외는 그대로
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.INTERNAL_ERROR);
+        }
     }
 
+    /** 예외 검사 메소드*/
+    private void validateUploadDto(ReceiptRequest.UploadDTO dto) {
+        validate(dto != null);
+        validate(dto.getTagId() != null && dto.getTagId() > 0);
+        validate(dto.getStoreName() != null && !dto.getStoreName().isBlank());
+        validate(dto.getPurchaseDate() != null);
+        validate(dto.getTotalAmount() != null && dto.getTotalAmount() > 0);
+    }
+
+    private void validate(boolean condition) {
+        if (!condition) throw new GeneralException(ErrorStatus.INVALID_INPUT);
+    }
+
+    /** 영수증 삭제 메소드*/
     @Override
     public Long deleteReceipt(Long receiptId) {
         receiptRepository.deleteById(receiptId);
