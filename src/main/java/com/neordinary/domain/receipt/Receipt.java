@@ -23,7 +23,7 @@ public class Receipt extends BaseEntity {
     private String storeName; // 상호명
 
     @Column
-    private LocalDate purchaseDate; // 일자
+    private String purchaseDate; // 일자
 
     @Column
     private Long totalAmount; // 총액

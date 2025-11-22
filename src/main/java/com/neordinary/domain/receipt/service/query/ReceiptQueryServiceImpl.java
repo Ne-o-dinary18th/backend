@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class ReceiptQueryServiceImpl implements ReceiptQueryService{
         return ReceiptResponse.ReceiptResponseDTO.builder()
                 .receiptId(receipt.getReceiptId())
                 .storeName(receipt.getStoreName())
-                .purchaseDate(receipt.getPurchaseDate())
+                .purchaseDate(LocalDate.parse(receipt.getPurchaseDate()))
                 .totalAmount(receipt.getTotalAmount())
                 .build();
     }

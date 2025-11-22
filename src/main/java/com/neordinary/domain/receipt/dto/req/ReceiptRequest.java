@@ -21,7 +21,7 @@ public class ReceiptRequest {
         public String storeName;
 
         @NotNull(message = "purchaseDate는 필수입니다.")
-        public LocalDate purchaseDate;
+        public String purchaseDate;
 
         @NotNull(message = "totalAmount는 필수입니다.")
         public Long totalAmount;

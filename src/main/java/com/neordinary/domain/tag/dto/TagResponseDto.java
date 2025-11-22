@@ -39,11 +39,11 @@ public class TagResponseDto {
     public static class ReceiptDto {
         Long receiptId;
         String storeName;
-        LocalDate purchaseDate; // 일자
+        String purchaseDate; // 일자
         Long totalAmount;
 
         public static TagResponseDto.ReceiptDto convertToTagDetail(
-                Long receiptId, String storeName, LocalDate purchaseDate, Long totalAmount) {
+                Long receiptId, String storeName, String purchaseDate, Long totalAmount) {
             return ReceiptDto.builder()
                     .receiptId(receiptId)
                     .storeName(storeName)

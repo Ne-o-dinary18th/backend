@@ -3,6 +3,7 @@ package com.neordinary.domain.receipt.controller;
 import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.Receipt;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
+import com.neordinary.domain.receipt.service.OcrService;
 import com.neordinary.domain.receipt.service.command.ReceiptCommandService;
 import com.neordinary.domain.receipt.service.query.ReceiptQueryService;
 import com.neordinary.global.apiPayload.ApiResponse;
@@ -17,7 +18,20 @@ import java.util.List;
 public class ReceiptController {
 
     private final ReceiptCommandService receiptCommandService;
-    private final ReceiptQueryService receiptQueryService;
+    private ReceiptQueryService receiptQueryService;
+    private final OcrService ocrService;
+
+    /**
+     * /api/ocr
+     *
+     * */
+    @PostMapping("/ocr")
+    public ApiResponse<String> ocr(@RequestBody String exampleText) {
+        return ApiResponse.onSuccess(ocrService.regularizate(exampleText));
+
+    }
+
+
 
     /**
      * /api/receipts/upload
