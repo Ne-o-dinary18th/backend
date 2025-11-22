@@ -94,8 +94,9 @@ public class TagController {
     /*
      * /api/tag/{tagId}/detail
      * 태그 상세페이지 조회 api
+     * return: tag detail + receipts
      * */
-    @Operation(summary = "태그 상세 조회 API", description = "태그 상세 조회")
+    @Operation(summary = "태그 상세 조회 API", description = "태그 상세 내용 + 영수증 조회")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
@@ -109,6 +110,5 @@ public class TagController {
     ) {
         return ApiResponse.onSuccess(tagQueryService.getTagReceipts(tagId));
     }
-
 
 }

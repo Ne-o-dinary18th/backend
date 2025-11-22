@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReceiptQueryServiceImpl implements ReceiptQueryService{
 
-    private static ReceiptRepository receiptRepository;
+    private final ReceiptRepository receiptRepository;
 
     // 영수증 조회하기
     @Override

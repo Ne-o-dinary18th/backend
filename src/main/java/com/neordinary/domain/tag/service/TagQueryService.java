@@ -1,5 +1,6 @@
 package com.neordinary.domain.tag.service;
 
+import com.neordinary.domain.receipt.Receipt;
 import com.neordinary.domain.receipt.repository.ReceiptRepository;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.User;
@@ -65,12 +66,33 @@ public class TagQueryService {
         List<User> users = userRepository.findUsersByTag_TagId(tagId);
         var userAmount = users.size();
 
-       //  List<TagResponseDto.ReceiptDto> receiptDtos =  receiptRepository.findReceiptsByTa
-        return null;
-
-
+        // Todo: 에러 핸들러
         // find receipts
+        var receipts =  receiptRepository.findReceiptsByTag_TagId(tagId);
+
+        // calculate totalAmount
+        Integer receiptAmount = Math.toIntExact(receipts.stream()
+                .mapToLong(Receipt::getTotalAmount)
+                .sum());
+
 
         // wrap list
+        List<TagResponseDto.ReceiptDto> receiptDtos = receipts.stream()
+                .map(receipt -> TagResponseDto.ReceiptDto.convertToTagDetail(
+                        receipt.getReceiptId(),
+                        receipt.getStoreName(),
+                        receipt.getPurchaseDate(),
+                        receipt.getTotalAmount()
+                )).toList();
+
+        TagResponseDto.TagDetailDto tagDetailDto = TagResponseDto.TagDetailDto.builder()
+                .tagId(tag.getTagId())
+                .tagName(tag.getTitle())
+                .totalAmount(receiptAmount)
+                .totalUsers(userAmount)
+                .receipts(receiptDtos)
+                .build();
+        return tagDetailDto;
+
     }
 }
