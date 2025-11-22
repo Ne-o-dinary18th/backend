@@ -5,6 +5,8 @@ import com.neordinary.global.apiPayload.exception.GeneralException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -15,6 +17,7 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class OcrService {
 
+    // 날짜가 형식에 맞는지 검증
     private static final Pattern DATE_PATTERN =
             Pattern.compile("(\\d{4}[./-]\\d{1,2}[./-]\\d{1,2})");
     // 정규식
@@ -26,9 +29,9 @@ public class OcrService {
 
         String key = "찾을 수 없음.";
         if(Objects.equals(store, key) || Objects.equals(dateTime, key)){
-            throw new GeneralException(ErrorStatus.INVALID_INPUT);
+            throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
         } else if (Objects.equals(totalAmount, 0)) {
-            throw new GeneralException(ErrorStatus.INVALID_INPUT);
+            throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
         }
 
         return List.of(store, totalAmount.toString(), dateTime);
@@ -110,11 +113,28 @@ public class OcrService {
 
                 Matcher matcher = DATE_PATTERN.matcher(trimmed);
                 if (matcher.find()) {
-                    return matcher.group(1); // 날짜만 반환
+                    String date =  matcher.group(1); // 날짜만 반환
+                    if (!isValidDate(date)) {
+                        throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
+                    }
+
+                    return date;
                 }
             }
         }
         return "찾을 수 없음.";
 
     }
+
+    private boolean isValidDate(String dateStr) {
+        // 형식에 맞는지 검증하고 올바른 날짜를 가지는지 계산
+        try {
+            DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy[-./]MM[-./]dd");
+            LocalDate.parse(dateStr.replace(".", "-").replace("/", "-"), fmt);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
+
