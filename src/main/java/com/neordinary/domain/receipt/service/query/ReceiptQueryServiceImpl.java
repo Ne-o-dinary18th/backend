@@ -1,12 +1,17 @@
 package com.neordinary.domain.receipt.service.query;
 
 import com.neordinary.domain.receipt.Receipt;
+import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
 import com.neordinary.domain.receipt.repository.ReceiptRepository;
+import com.neordinary.domain.tag.Tag;
+import com.neordinary.global.apiPayload.code.status.ErrorStatus;
+import com.neordinary.global.apiPayload.exception.GeneralException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,15 +21,29 @@ public class ReceiptQueryServiceImpl implements ReceiptQueryService{
 
     // 영수증 조회하기
     @Override
-    public Receipt getReceipt(Long receiptId) {
-        Optional<Receipt> findReceipt = receiptRepository.findById(receiptId);
-        return findReceipt.orElse(null);
+    @Transactional(readOnly = true)
+    public ReceiptResponse.ReceiptResponseDTO getReceipt(Long receiptId) {
+        Receipt receipt = receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.RECEIPT_NOT_FOUND));
+
+        return ReceiptResponse.ReceiptResponseDTO.builder()
+                .receiptId(receipt.getReceiptId())
+                .storeName(receipt.getStoreName())
+                .purchaseDate(LocalDate.parse(receipt.getPurchaseDate()))
+                .totalAmount(receipt.getTotalAmount())
+                .build();
     }
 
     // 영수증 총액 계산
     @Override
+    @Transactional(readOnly = true)
     public Long getTotalAmount(List<Long> receiptIds) {
         List<Receipt> receipts = receiptRepository.findAllById(receiptIds);
+
+        if (receipts.size() != receiptIds.size()) {
+            throw new GeneralException(ErrorStatus.RECEIPT_NOT_FOUND);
+        }
+
         return receipts.stream()
                 .mapToLong(Receipt::getTotalAmount)
                 .sum();

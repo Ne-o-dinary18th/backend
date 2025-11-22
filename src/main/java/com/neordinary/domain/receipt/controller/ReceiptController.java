@@ -3,11 +3,11 @@ package com.neordinary.domain.receipt.controller;
 import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.Receipt;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
-//import com.neordinary.domain.receipt.exception.code.ReceiptCode;
 import com.neordinary.domain.receipt.service.OcrService;
 import com.neordinary.domain.receipt.service.command.ReceiptCommandService;
 import com.neordinary.domain.receipt.service.query.ReceiptQueryService;
 import com.neordinary.global.apiPayload.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +31,8 @@ public class ReceiptController {
 
     }
 
+
+
     /**
      * /api/receipts/upload
      * 영수증 생성하기 API
@@ -38,7 +40,7 @@ public class ReceiptController {
      */
     @PostMapping("/receipts/upload")
     public ApiResponse<ReceiptResponse.UploadDTO> uploadReceipt(
-            @RequestBody ReceiptRequest.UploadDTO dto
+            @RequestBody @Valid ReceiptRequest.UploadDTO dto
     ){
         return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(dto));
     }
@@ -50,7 +52,7 @@ public class ReceiptController {
      */
 
     @GetMapping("/receipts/{receiptId}")
-    public ApiResponse<Receipt> getReceipt(
+    public ApiResponse<ReceiptResponse.ReceiptResponseDTO> getReceipt(
             @PathVariable Long receiptId
     ){
        return ApiResponse.onSuccess(receiptQueryService.getReceipt(receiptId));
@@ -64,7 +66,7 @@ public class ReceiptController {
      */
     @GetMapping("/receipts/all")
     public ApiResponse<Long> getTotalAmount(
-            @PathVariable List<Long> receiptIds
+            @RequestParam List<Long> receiptIds
     ){
         return ApiResponse.onSuccess(receiptQueryService.getTotalAmount(receiptIds));
     }
