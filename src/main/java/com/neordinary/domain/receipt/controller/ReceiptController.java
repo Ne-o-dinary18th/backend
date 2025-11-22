@@ -47,9 +47,11 @@ public class ReceiptController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 입력")
     })
     public ApiResponse<ReceiptResponse.UploadDTO> uploadReceipt(
-            @RequestBody @Valid ReceiptRequest.UploadDTO dto
+            @RequestParam Long tagId,
+//            @RequestBody ReceiptRequest.OcrTextRequest ocrText
+            @RequestBody String ocrText
     ){
-        return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(dto));
+        return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(tagId, ocrText));
     }
 
     /**

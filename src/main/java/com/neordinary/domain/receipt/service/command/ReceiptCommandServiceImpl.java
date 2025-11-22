@@ -5,6 +5,7 @@ import com.neordinary.domain.receipt.converter.ReceiptConverter;
 import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
 import com.neordinary.domain.receipt.repository.ReceiptRepository;
+import com.neordinary.domain.receipt.service.OcrService;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.repository.TagRepository;
 import com.neordinary.global.apiPayload.code.status.ErrorStatus;
@@ -21,42 +22,25 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
 
     private final ReceiptRepository receiptRepository;
     private final TagRepository tagRepository;
+    private final OcrService ocrService;
 
-    /** 영수증 업로드 메소드*/
     @Override
-    public ReceiptResponse.UploadDTO uploadReceipt(ReceiptRequest.UploadDTO dto){
+    public ReceiptResponse.UploadDTO uploadReceipt(Long tagId, String ocrText){
+        Tag tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
 
-        try {
-            Tag tag = tagRepository.findById(dto.tagId)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
-            Receipt entity = ReceiptConverter.toReceipt(dto, tag);
+        // convert ocr
+        String store = ocrService.findStoreText(ocrText);
+        String purchaseDate = ocrService.findDateTime(ocrText);
+        Integer totalPrice = ocrService.findTotalAmount(ocrText);
 
-            validateUploadDto(dto);
+        // entity save
+        Receipt entity = ReceiptConverter.toReceipt(store, purchaseDate, totalPrice, tag);
+        receiptRepository.save(entity);
 
-            receiptRepository.save(entity);
-
-            return ReceiptConverter.toUploadDTO(entity);
-        } catch (GeneralException e){
-            throw e; // 의도된 예외는 그대로
-        } catch (Exception e) {
-            throw new GeneralException(ErrorStatus.INTERNAL_ERROR);
-        }
+        return ReceiptConverter.toUploadDTO(entity);
     }
 
-    /** 예외 검사 메소드*/
-    private void validateUploadDto(ReceiptRequest.UploadDTO dto) {
-        validate(dto != null);
-        validate(dto.getTagId() != null && dto.getTagId() > 0);
-        validate(dto.getStoreName() != null && !dto.getStoreName().isBlank());
-        validate(dto.getPurchaseDate() != null);
-        validate(dto.getTotalAmount() != null && dto.getTotalAmount() > 0);
-    }
-
-    private void validate(boolean condition) {
-        if (!condition) throw new GeneralException(ErrorStatus.INVALID_INPUT);
-    }
-
-    /** 영수증 삭제 메소드*/
     @Override
     public Long deleteReceipt(Long receiptId) {
         receiptRepository.deleteById(receiptId);

@@ -2,6 +2,7 @@ package com.neordinary.domain.report.controller;
 
 import com.neordinary.domain.report.dto.ReportCreateRequest;
 import com.neordinary.domain.report.dto.ReportDetailResponse;
+import com.neordinary.domain.report.dto.ReportTagFilterResponse;
 import com.neordinary.domain.report.service.ReportService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -55,4 +56,16 @@ public class ReportController {
         ReportDetailResponse response = reportService.getReport(reportId);
         return ResponseEntity.ok(response);
     }
+
+    // 보고서 태그이름별 조회
+    @GetMapping("/tag/{tagId}")
+    @Operation(summary = "특정 태그에 속한 보고서 조회",
+            description = "태그 ID에 해당하는 보고서를 필터링하여 반환합니다.")
+    public ResponseEntity<List<ReportTagFilterResponse>> getReportsByTag(
+            @PathVariable Long tagId
+    ) {
+        List<ReportTagFilterResponse> reports = reportService.getReportsByTagId(tagId);
+        return ResponseEntity.ok(reports);
+    }
+
 }

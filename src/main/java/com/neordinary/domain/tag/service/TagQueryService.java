@@ -11,6 +11,7 @@ import com.neordinary.domain.tag.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -95,4 +96,35 @@ public class TagQueryService {
         return tagDetailDto;
 
     }
+
+    public List<TagResponseDto.TagReceiptListDto> getAllTagsAndReceipts() {
+
+        List<TagResponseDto.TagReceiptListDto> tagList = tagRepository.findAll()
+                .stream()
+                .map(tag -> {
+                    // 각 태그마다 영수증 조회
+                    List<Receipt> receipts = receiptRepository.findReceiptsByTag_TagId(tag.getTagId());
+
+                    // 영수증 DTO 변환
+                    List<TagResponseDto.ReceiptDto> receiptDtos = receipts.stream()
+                            .map(receipt -> TagResponseDto.ReceiptDto.convertToTagDetail(
+                                    receipt.getReceiptId(),
+                                    receipt.getStoreName(),
+                                    receipt.getPurchaseDate(),
+                                    receipt.getTotalAmount()
+                            ))
+                            .collect(Collectors.toList());
+
+                    // 태그 + 영수증 리스트 DTO 생성
+                    return TagResponseDto.TagReceiptListDto.builder().
+                            tagId(tag.getTagId())
+                            .tagName(tag.getTitle())
+                            .receipts(receiptDtos)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return tagList;
+    }
+
 }
