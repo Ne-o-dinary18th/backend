@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/tag")
@@ -109,6 +111,25 @@ public class TagController {
             @PathVariable Long tagId
     ) {
         return ApiResponse.onSuccess(tagQueryService.getTagReceipts(tagId));
+    }
+
+
+    /*
+     * /api/tag/receipt/all
+     * 태그-영수증 리스트 조회 api
+     * return: tag  + receipts sets
+     * */
+    @Operation(summary = "태그-영수증들 조회 API", description = "메인페이지 태그 + 영수증들 조회")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG_CREATE_ERROR", description = "태그 생성에 실패했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4002", description = "해당 태그가 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "TAG4004", description = "해당 태그명은 이미 존재합니다."),
+
+    })
+    @GetMapping("/receipt/all")
+    public ApiResponse<List<TagResponseDto.TagReceiptListDto>> getTagReceiptsList() {
+        return ApiResponse.onSuccess(tagQueryService.getAllTagsAndReceipts());
     }
 
 }

@@ -64,4 +64,12 @@ public class TagResponseDto {
         Integer totalUsers;
         List<ReceiptDto> receipts;
     }
+    @Builder
+    @Getter
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class TagReceiptListDto {
+        Long tagId;
+        String tagName;
+        List<ReceiptDto> receipts;
+    }
 }
