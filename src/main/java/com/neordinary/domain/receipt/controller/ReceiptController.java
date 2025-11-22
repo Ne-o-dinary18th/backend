@@ -1,7 +1,7 @@
 package com.neordinary.domain.receipt.controller;
 
-import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.Receipt;
+import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
 import com.neordinary.domain.receipt.service.command.ReceiptCommandService;
 import com.neordinary.domain.receipt.service.query.ReceiptQueryService;
