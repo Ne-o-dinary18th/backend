@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class ReportReceiptResponse {
     private Long receiptId;
     private Long amount;
-    private LocalDate date;
+    private String date;
     private String storeName;
 }
 

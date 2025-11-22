@@ -15,7 +15,7 @@ public class ReceiptRequest {
 
         // 영수증 OCR 파싱 값
         public String storeName;
-        public LocalDate purchaseDate;
+        public String purchaseDate;
         public Long totalAmount;
 
         // 영수증 원본
