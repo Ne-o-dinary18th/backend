@@ -59,10 +59,17 @@ public class ReportService {
 
     private ReportDetailResponse convertToDetail(Report report) {
 
+        Tag tag = report.getTag();
+
         return ReportDetailResponse.builder()
                 .reportId(report.getReportId())
                 .tagName(report.getTag().getTitle())
                 .reportDate(report.getReportDate())
+
+                // 관리 정보 추가
+                .managerName(tag.getManagerName())
+                .managerAccount(tag.getManagerAccount())
+
                 .totalAmount(report.getTotalAmount())
                 .receipts(
                         report.getReceipts().stream()

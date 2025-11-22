@@ -19,5 +19,6 @@ public class Tag {
     @Column(nullable = false)
     private String title;
 
-    private String description;
+    private String managerName; // 관리자 이름
+    private String managerAccount; //관리 계좌
 }
