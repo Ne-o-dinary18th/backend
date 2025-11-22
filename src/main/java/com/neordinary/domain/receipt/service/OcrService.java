@@ -1,10 +1,13 @@
 package com.neordinary.domain.receipt.service;
 
+import com.neordinary.global.apiPayload.code.status.ErrorStatus;
+import com.neordinary.global.apiPayload.exception.GeneralException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,15 +15,23 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class OcrService {
 
+    private static final Pattern DATE_PATTERN =
+            Pattern.compile("(\\d{4}[./-]\\d{1,2}[./-]\\d{1,2})");
     // 정규식
     // 상호명, 총액, 일자
-    public String regularizate(String ocrText) {
+    public List<String> regularizate(String ocrText) {
         String store = findStoreText(ocrText);
         Integer totalAmount = findTotalAmount(ocrText);
         String dateTime = findDateTime(ocrText);
 
-        return store + totalAmount + dateTime;
+        String key = "찾을 수 없음.";
+        if(Objects.equals(store, key) || Objects.equals(dateTime, key)){
+            throw new GeneralException(ErrorStatus.INVALID_INPUT);
+        } else if (Objects.equals(totalAmount, 0)) {
+            throw new GeneralException(ErrorStatus.INVALID_INPUT);
+        }
 
+        return List.of(store, totalAmount.toString(), dateTime);
     }
 
     public String findStoreText(String text) {
@@ -41,7 +52,7 @@ public class OcrService {
             }
         }
 
-        return "찾을 수 없음."; // 없으면 null
+        return "찾을 수 없음."; // 없으면 경고 문구 반환
 
     }
 
@@ -97,7 +108,10 @@ public class OcrService {
                     trimmed.startsWith("일자") ||
                     trimmed.startsWith("승인일시")) {
 
-                return trimmed;   // 조건을 만족하면 바로 반환
+                Matcher matcher = DATE_PATTERN.matcher(trimmed);
+                if (matcher.find()) {
+                    return matcher.group(1); // 날짜만 반환
+                }
             }
         }
         return "찾을 수 없음.";
