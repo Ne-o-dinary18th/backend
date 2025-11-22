@@ -19,10 +19,24 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Object>> handleGeneralException(GeneralException e) {
         ErrorStatus status = e.getErrorStatus();
 
+        HttpStatus httpStatus = switch (status) {
+            case REPORT_NOT_FOUND,
+                    TAG_NOT_FOUND,
+                    RECEIPT_NOT_FOUND -> HttpStatus.NOT_FOUND;
+
+            case RECEIPT_NOT_IN_TAG,
+                    RECEIPT_INVALID_INPUT,
+                    TAG_NAME_REQUIRED,
+                    TAG_NAME_ALREADY_EXISTS -> HttpStatus.BAD_REQUEST;
+
+            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+        };
+
         return ResponseEntity
-                .status(status.getHttpStatus())
+                .status(httpStatus)
                 .body(ApiResponse.onFailure(status.getCode(), status.getMessage(), null));
     }
+
 
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ApiResponse<Object>> handleNoSuchElement(NoSuchElementException e) {
