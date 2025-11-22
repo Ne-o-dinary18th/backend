@@ -15,7 +15,7 @@ public enum ErrorStatus {
     TAG_NAME_REQUIRED("TAG4003", "태그명은 필수 입니다."),
     TAG_NAME_ALREADY_EXISTS("TAG4004", "해당 태그명은 이미 존재합니다."),
 
-    RECEIPT_NOT_FOUND("RECEIPT404", "해당 영수증이 없습니다.");
+    RECEIPT_NOT_FOUND("RECEIPT400", "해당 영수증이 없습니다.");
 
 
     private final String code;
