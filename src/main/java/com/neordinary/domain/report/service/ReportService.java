@@ -65,6 +65,7 @@ public class ReportService {
         return reports.stream()
                 .map(r -> ReportTagFilterResponse.builder()
                         .reportId(r.getReportId())
+                        .reportDate(r.getReportDate())
                         .tagName(r.getTag().getTitle())
                         .totalAmount(r.getTotalAmount())
                         .build()
