@@ -3,6 +3,8 @@ package com.neordinary.domain.report.service;
 import com.neordinary.domain.receipt.Receipt;
 import com.neordinary.domain.receipt.respository.ReceiptRepository;
 import com.neordinary.domain.report.dto.ReportCreateRequest;
+import com.neordinary.domain.report.dto.ReportDetailResponse;
+import com.neordinary.domain.report.dto.ReportReceiptResponse;
 import com.neordinary.domain.report.entity.Report;
 import com.neordinary.domain.report.entity.ReportReceipt;
 import com.neordinary.domain.report.repository.ReportRepository;
@@ -55,4 +57,45 @@ public class ReportService {
 
         return report.getReportId();
     }
+
+    // 보고서 전체 조회
+    public List<ReportDetailResponse> getAllReports() {
+        List<Report> reports = reportRepository.findAll();
+
+        return reports.stream()
+                .map(this::convertToDetail)
+                .toList();
+    }
+
+    //보고서 개별 조회
+    public ReportDetailResponse getReport(Long reportId) {
+        Report report = reportRepository.findById(reportId)
+                .orElseThrow(() -> new RuntimeException("Report not found"));
+
+        return convertToDetail(report);
+    }
+
+    // Report 엔티티 → ReportDetailResponse 변환
+    private ReportDetailResponse convertToDetail(Report report) {
+
+        Tag tag = report.getTag();
+
+        return ReportDetailResponse.builder()
+                .reportId(report.getReportId())
+                .tagName(tag.getTitle())
+                .reportDate(report.getCreatedAt().toLocalDate())
+                .totalAmount(report.getTotalAmount())
+                .receipts(
+                        report.getReportReceipts().stream()
+                                .map(rr -> ReportReceiptResponse.builder()
+                                        .receiptId(rr.getId())
+                                        .amount(rr.getTotalPrice())
+                                        .date(rr.getDate())
+                                        .storeName(rr.getStoreName())
+                                        .build()
+                                ).toList()
+                )
+                .build();
+    }
+
 }
