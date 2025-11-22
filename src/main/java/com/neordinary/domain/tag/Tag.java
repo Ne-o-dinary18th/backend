@@ -1,4 +1,4 @@
-package com.neordinary.global.domain.tag;
+package com.neordinary.domain.tag;
 
 import jakarta.persistence.*;
 import lombok.*;

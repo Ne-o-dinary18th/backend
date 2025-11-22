@@ -1,7 +1,7 @@
-package com.neordinary.global.domain.report;
+package com.neordinary.domain.report;
 
-import com.neordinary.global.domain.common.BaseEntity;
-import com.neordinary.global.domain.tag.Tag;
+import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
