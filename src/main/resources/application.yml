@@ -7,7 +7,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create # 초기세팅 이후 update로 변경
+      ddl-auto: update # 초기세팅 이후 update로 변경
     properties:
       hibernate:
         format_sql: true
