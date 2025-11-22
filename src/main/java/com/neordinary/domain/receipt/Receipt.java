@@ -17,10 +17,6 @@ public class Receipt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long receiptId; // 영수증 아이디
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JoinColumn(name = "tagId")
-    //private Tag tag; // 태그
-
     @Column
     private String storeName; // 상호명
 
@@ -32,10 +28,4 @@ public class Receipt {
 
     @Column
     private String imageUrl; // 영수증사진Url
-
-    /*
-    @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL)
-    @Builder.Default
-    private List<Item> items = new ArrayList<>();
-    */
 }

@@ -24,6 +24,6 @@ public class ReportReceipt {
 
     private String storeName;
     private LocalDate date;
-    private Integer totalPrice;
+    private Long totalPrice;
 }
 
