@@ -17,8 +17,6 @@ public class ReportDetailResponse {
     // 상단 정보
     private String tagName;
     private LocalDate reportDate;  // 생성일
-    private int memberCount;
-    private List<String> members;
     private String managerName;
     private String managerAccount;
 
