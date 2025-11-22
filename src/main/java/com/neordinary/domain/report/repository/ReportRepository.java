@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
     List<Report> findAllByTag_TagId(Long tagId);
+    boolean existsByReceipts_ReceiptId(Long receiptId);
 }

@@ -6,6 +6,7 @@ import com.neordinary.domain.receipt.dto.req.ReceiptRequest;
 import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
 import com.neordinary.domain.receipt.repository.ReceiptRepository;
 import com.neordinary.domain.receipt.service.OcrService;
+import com.neordinary.domain.report.repository.ReportRepository;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.repository.TagRepository;
 import com.neordinary.global.apiPayload.code.status.ErrorStatus;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class ReceiptCommandServiceImpl implements ReceiptCommandService{
 
     private final ReceiptRepository receiptRepository;
+    private final ReportRepository reportRepository;
     private final TagRepository tagRepository;
     private final OcrService ocrService;
 
@@ -54,6 +56,9 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
         receiptRepository.findById(receiptId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RECEIPT_NOT_FOUND));
 
+        if (reportRepository.existsByReceipts_ReceiptId(receiptId)) {
+            throw new GeneralException(ErrorStatus.RECEIPT_CANNOT_DELETE_IN_REPORT);
+        }
         receiptRepository.deleteById(receiptId);
         return receiptId;
     }
