@@ -1,6 +1,6 @@
-package com.neordinary.global.domain.report;
+package com.neordinary.domain.report.entity;
 
-import com.neordinary.global.domain.receipt.Receipt;
+import com.neordinary.domain.receipt.Receipt;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,4 +1,4 @@
-package com.neordinary.global.domain.common;
+package com.neordinary.domain.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

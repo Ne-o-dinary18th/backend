@@ -1,5 +1,7 @@
-package com.neordinary.global.domain.tag;
+package com.neordinary.domain.report.entity;
 
+import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,15 +10,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "users")
-public class User {
+@Table(name = "reports")
+public class Report extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "users_id")
-    private Long userId;
-
-    private String name;
+    @Column(name = "reports_id")
+    private Long reportId;
 
     @ManyToOne
     @JoinColumn(name = "tags_id", nullable = false)

@@ -1,7 +1,8 @@
-package com.neordinary.global.domain.receipt;
+package com.neordinary.domain.receipt;
 
-import com.neordinary.global.domain.common.BaseEntity;
-import com.neordinary.global.domain.tag.Tag;
+
+import com.neordinary.domain.common.BaseEntity;
+import com.neordinary.domain.tag.Tag;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
