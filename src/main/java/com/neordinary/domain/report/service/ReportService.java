@@ -28,13 +28,29 @@ public class ReportService {
     private final ReceiptRepository receiptRepository;
     private final ReportRepository reportRepository;
 
-    public Long createReport(ReportCreateRequest request) { // 태그내에 해당 영수증 번호가 없을경우 예외처리는?흐린눈?
+    public Long createReport(ReportCreateRequest request) {
 
         Tag tag = tagRepository.findById(request.getTagId())
-                .orElseThrow(() -> new RuntimeException("Tag not found"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
 
-        List<Receipt> receipts = receiptRepository.findAllById(request.getReceiptIds());
+        List<Long> requestReceiptIds = request.getReceiptIds();
 
+        List<Receipt> receipts = receiptRepository.findAllById(requestReceiptIds);
+
+        // 영수증 수량 검증 (ID가 아예 존재하지 않는 경우)
+        if (receipts.size() != requestReceiptIds.size()) {
+            throw new GeneralException(ErrorStatus.RECEIPT_NOT_FOUND);
+        }
+
+        // 해당 태그에 속하는지 검증
+        boolean invalid = receipts.stream()
+                .anyMatch(r -> !r.getTag().getTagId().equals(tag.getTagId()));
+
+        if (invalid) {
+            throw new GeneralException(ErrorStatus.RECEIPT_NOT_IN_TAG);
+        }
+
+        // 정상 케이스 → 보고서 생성
         Report report = Report.builder()
                 .tag(tag)
                 .reportDate(LocalDate.now())
@@ -46,6 +62,7 @@ public class ReportService {
 
         return report.getReportId();
     }
+
 
     public List<ReportDetailResponse> getAllReports() {
         return reportRepository.findAll().stream()
