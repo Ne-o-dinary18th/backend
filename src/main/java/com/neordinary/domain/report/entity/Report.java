@@ -1,4 +1,4 @@
-package com.neordinary.domain.report;
+package com.neordinary.domain.report.entity;
 
 import com.neordinary.domain.common.BaseEntity;
 import com.neordinary.domain.tag.Tag;
