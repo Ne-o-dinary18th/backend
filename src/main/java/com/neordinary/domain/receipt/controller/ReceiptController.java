@@ -6,6 +6,7 @@ import com.neordinary.domain.receipt.dto.res.ReceiptResponse;
 import com.neordinary.domain.receipt.service.command.ReceiptCommandService;
 import com.neordinary.domain.receipt.service.query.ReceiptQueryService;
 import com.neordinary.global.apiPayload.ApiResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class ReceiptController {
 
     private final ReceiptCommandService receiptCommandService;
-    private ReceiptQueryService receiptQueryService;
+    private final ReceiptQueryService receiptQueryService;
 
     /**
      * /api/receipts/upload
@@ -25,7 +26,7 @@ public class ReceiptController {
      */
     @PostMapping("/receipts/upload")
     public ApiResponse<ReceiptResponse.UploadDTO> uploadReceipt(
-            @RequestBody ReceiptRequest.UploadDTO dto
+            @RequestBody @Valid ReceiptRequest.UploadDTO dto
     ){
         return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(dto));
     }
@@ -37,7 +38,7 @@ public class ReceiptController {
      */
 
     @GetMapping("/receipts/{receiptId}")
-    public ApiResponse<Receipt> getReceipt(
+    public ApiResponse<ReceiptResponse.ReceiptResponseDTO> getReceipt(
             @PathVariable Long receiptId
     ){
        return ApiResponse.onSuccess(receiptQueryService.getReceipt(receiptId));
@@ -51,7 +52,7 @@ public class ReceiptController {
      */
     @GetMapping("/receipts/all")
     public ApiResponse<Long> getTotalAmount(
-            @PathVariable List<Long> receiptIds
+            @RequestParam List<Long> receiptIds
     ){
         return ApiResponse.onSuccess(receiptQueryService.getTotalAmount(receiptIds));
     }

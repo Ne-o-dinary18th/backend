@@ -13,8 +13,9 @@ public enum ErrorStatus {
     TAG_CREATE_ERROR("TAG4001", "태그 생성에 실패했습니다."),
     TAG_NOT_FOUND("TAG4002", "해당 태그가 없습니다."),
     TAG_NAME_REQUIRED("TAG4003", "태그명은 필수 입니다."),
-    TAG_NAME_ALREADY_EXISTS("TAG4004", "해당 태그명은 이미 존재합니다.");
+    TAG_NAME_ALREADY_EXISTS("TAG4004", "해당 태그명은 이미 존재합니다."),
 
+    RECEIPT_NOT_FOUND("RECEIPT404", "해당 영수증이 없습니다.");
 
 
     private final String code;

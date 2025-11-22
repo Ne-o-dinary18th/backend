@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 @Getter
 @AllArgsConstructor
 public class ReceiptResponse {
@@ -19,7 +21,10 @@ public class ReceiptResponse {
     @Getter
     @AllArgsConstructor
     public static class ReceiptResponseDTO{
-
+        Long receiptId;
+        String storeName;
+        LocalDate purchaseDate;
+        Long totalAmount;
     }
 
 }
