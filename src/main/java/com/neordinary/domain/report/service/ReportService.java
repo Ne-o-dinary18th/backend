@@ -5,6 +5,7 @@ import com.neordinary.domain.receipt.repository.ReceiptRepository;
 import com.neordinary.domain.report.dto.ReportCreateRequest;
 import com.neordinary.domain.report.dto.ReportDetailResponse;
 import com.neordinary.domain.report.dto.ReportReceiptResponse;
+import com.neordinary.domain.report.dto.ReportTagFilterResponse;
 import com.neordinary.domain.report.entity.Report;
 import com.neordinary.domain.report.repository.ReportRepository;
 import com.neordinary.domain.tag.Tag;
@@ -55,6 +56,19 @@ public class ReportService {
                 .orElseThrow(() -> new RuntimeException("Report not found"));
 
         return convertToDetail(report);
+    }
+
+    public List<ReportTagFilterResponse> getReportsByTagId(Long tagId) {
+
+        List<Report> reports = reportRepository.findAllByTag_TagId(tagId);
+
+        return reports.stream()
+                .map(r -> ReportTagFilterResponse.builder()
+                        .reportId(r.getReportId())
+                        .tagName(r.getTag().getTitle())
+                        .totalAmount(r.getTotalAmount())
+                        .build()
+                ).toList();
     }
 
     private ReportDetailResponse convertToDetail(Report report) {
