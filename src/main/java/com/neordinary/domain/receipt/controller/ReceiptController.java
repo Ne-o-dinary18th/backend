@@ -11,7 +11,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -37,7 +39,10 @@ public class ReceiptController {
      * 영수증 생성 API
      *
      */
-    @PostMapping("/receipts/upload")
+    @PostMapping(
+            value = "/receipts/upload",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
     @Operation(summary = "영수증 생성", description = "새로운 영수증(지출 내역) 생성합니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "영수증 생성 성공"),
@@ -45,10 +50,14 @@ public class ReceiptController {
     })
     public ApiResponse<ReceiptResponse.UploadDTO> uploadReceipt(
             @RequestParam Long tagId,
-//            @RequestBody ReceiptRequest.OcrTextRequest ocrText
-            @RequestBody String ocrText
+
+            // ocrText를 multipart 안에서 텍스트 파트로 받기
+            @RequestPart("ocrText") String ocrText,
+
+            // 이미지 파일 파트
+            @RequestPart("image") MultipartFile image
     ){
-        return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(tagId, ocrText));
+        return ApiResponse.onSuccess(receiptCommandService.uploadReceipt(tagId, ocrText, image));
     }
 
     /**

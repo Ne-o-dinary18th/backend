@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,19 +15,23 @@ import java.util.regex.Pattern;
 @AllArgsConstructor
 public class OcrService {
 
-    // 날짜가 yyyy-mm-dd 형식에 맞는지 검증
+    // 날짜 패턴 (yyyy-mm-dd, yyyy.mm.dd, yyyy/mm/dd)
     private static final Pattern DATE_PATTERN =
             Pattern.compile("(\\d{4}[./-]\\d{1,2}[./-]\\d{1,2})");
 
-    // 정규식
-    // 상호명, 총액, 일자
+    // 금액 패턴 (2,000원 / 2000 원 / 2000)
+    private static final Pattern AMOUNT_PATTERN =
+            Pattern.compile("([0-9]{1,3}(?:,[0-9]{3})*|[0-9]+)\\s*원?");
+
     public List<String> regularizate(String ocrText) {
-        String store = findStoreText(ocrText);
-        Integer totalAmount = findTotalAmount(ocrText);
-        String dateTime = findDateTime(ocrText);
+        String normalized = normalize(ocrText);
+
+        String store = findStoreText(normalized);
+        Integer totalAmount = findTotalAmount(normalized);
+        String dateTime = findDateTime(normalized);
 
         String key = "찾을 수 없음.";
-        if(Objects.equals(store, key) || Objects.equals(dateTime, key)){
+        if (Objects.equals(store, key) || Objects.equals(dateTime, key)) {
             throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
         } else if (Objects.equals(totalAmount, 0)) {
             throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
@@ -38,103 +40,144 @@ public class OcrService {
         return List.of(store, totalAmount.toString(), dateTime);
     }
 
-    public String findStoreText(String text) {
-        // 상호명, 상호, (주)로 시작하는 행 추출
-        // OCR 결과를 줄 단위로 분리
-        List<String> lines = Arrays.asList(text.split("\n"));
+    /**
+     * 줄바꿈/탭/연속 공백을 모두 한 칸 공백으로 평탄화
+     */
+    private String normalize(String text) {
+        if (text == null) return "";
+        return text
+                .replaceAll("[\\t\\r\\n]+", " ")   // 줄바꿈/탭 -> 공백
+                .replaceAll(" +", " ")            // 연속 공백 -> 1칸
+                .trim();
+    }
 
+    /**
+     * 상호명 찾기:
+     * 1) 키워드가 포함된 구간을 정규식으로 추출 (평탄화 대응)
+     * 2) 그래도 없으면 기존 줄단위 fallback
+     */
+    public String findStoreText(String text) {
+
+        // (주)OOO / 주식회사 OOO / 상호명 OOO / 상호 OOO 형태
+        Pattern storePattern = Pattern.compile(
+                "(상호명|상호|\\(주\\)|주식회사)\\s*[:]?\\s*([가-힣A-Za-z0-9()\\-_.]+)"
+        );
+        Matcher m = storePattern.matcher(text);
+        if (m.find()) {
+            // 키워드 + 실제 상호명만 깔끔하게 반환
+            return (m.group(1) + " " + m.group(2)).trim();
+        }
+
+        // fallback: 혹시 \n 살아있는 경우 대비
+        List<String> lines = Arrays.asList(text.split("\n"));
         for (String line : lines) {
             String trimmed = line.trim();
-
-            // 상호명, 상호, (주) 등으로 시작하는 라인 찾기
             if (trimmed.startsWith("상호명") ||
                     trimmed.startsWith("상호") ||
                     trimmed.startsWith("(주)") ||
                     trimmed.startsWith("주식회사")) {
-
-                return trimmed;   // 조건을 만족하면 바로 반환
+                return trimmed;
             }
         }
 
-        return "찾을 수 없음."; // 없으면 경고 문구 반환
-
+        return "찾을 수 없음.";
     }
 
+    /**
+     * 총액 찾기:
+     * 키워드가 있는 위치 뒤쪽에서 금액 패턴 추출
+     */
     public Integer findTotalAmount(String text) {
-        List<String> lines = Arrays.asList(text.split("\n"));
 
-        for (String line : lines) {
-            String trimmed = line.trim();
+        // 금액 키워드들
+        String[] amountKeywords = {
+                "이용금액", "합계 금액", "총액", "신용카드",
+                "결제금액", "카드결제", "카 드 결 제", "결제 금액"
+        };
 
-            if (trimmed.startsWith("이용금액") ||
-                    trimmed.startsWith("합계 금액") ||
-                    trimmed.startsWith("총액") ||
-                    trimmed.startsWith("신용카드") ||
-                    trimmed.startsWith("결제금액") ||
-                    trimmed.startsWith("카드결제") ||
-                    trimmed.startsWith("카 드 결 제") ||
-                    trimmed.startsWith("결제 금액")) {
-
-                Integer amount = extractAmountAsInt(trimmed);
-
-                return amount != null ? amount : 0;
+        for (String key : amountKeywords) {
+            int idx = text.indexOf(key);
+            if (idx != -1) {
+                // 키워드부터 뒤쪽 40자만 잘라서 금액 찾기 (너무 멀리 가면 오탐)
+                String window = text.substring(idx, Math.min(text.length(), idx + 40));
+                Integer amount = extractAmountAsInt(window);
+                if (amount != null) return amount;
             }
         }
 
-        return 0; // 못 찾으면 null
+        // fallback: 라인 기반
+        List<String> lines = Arrays.asList(text.split("\n"));
+        for (String line : lines) {
+            String trimmed = line.trim();
+            for (String key : amountKeywords) {
+                if (trimmed.startsWith(key)) {
+                    Integer amount = extractAmountAsInt(trimmed);
+                    return amount != null ? amount : 0;
+                }
+            }
+        }
+
+        return 0;
     }
 
     private Integer extractAmountAsInt(String textLine) {
-        // 숫자 + 쉼표 + 선택적으로 '원'
-        Pattern pattern = Pattern.compile("([0-9,]+)원?");
-        Matcher matcher = pattern.matcher(textLine);
-
+        Matcher matcher = AMOUNT_PATTERN.matcher(textLine);
         if (matcher.find()) {
-            String raw = matcher.group(1); // ex: "2,000"
-            raw = raw.replace(",", "");    // → "2000"
-
+            String raw = matcher.group(1).replace(",", "");
             try {
-                return Integer.parseInt(raw); // 정수 변환
+                return Integer.parseInt(raw);
             } catch (NumberFormatException e) {
                 return null;
             }
         }
-
         return null;
     }
 
-
+    /**
+     * 날짜 찾기:
+     * 키워드 뒤쪽에서 DATE_PATTERN 찾기
+     */
     public String findDateTime(String text) {
-        // 이용일시, 거래일시, 승인일시, 일자
-        List<String> lines = Arrays.asList(text.split("\n"));
 
-        for (String line : lines) {
-            String trimmed = line.trim();
+        String[] dateKeywords = {"이용일시", "거래일시", "일자", "승인일시"};
 
-            if (trimmed.startsWith("이용일시") ||
-                    trimmed.startsWith("거래일시") ||
-                    trimmed.startsWith("일자") ||
-                    trimmed.startsWith("승인일시")) {
-
-                // 1. yyyy-mm-dd에 맞는지 검증
-                Matcher matcher = DATE_PATTERN.matcher(trimmed);
+        for (String key : dateKeywords) {
+            int idx = text.indexOf(key);
+            if (idx != -1) {
+                String window = text.substring(idx, Math.min(text.length(), idx + 40));
+                Matcher matcher = DATE_PATTERN.matcher(window);
                 if (matcher.find()) {
-                    String date =  matcher.group(1); // 날짜만 반환
-                    // 2. 24시간, 365일 내에 들어오는지 검증
+                    String date = matcher.group(1);
                     if (!isValidDate(date)) {
                         throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
                     }
-
                     return date;
                 }
             }
         }
-        return "찾을 수 없음.";
 
+        // fallback: 라인 기반
+        List<String> lines = Arrays.asList(text.split("\n"));
+        for (String line : lines) {
+            String trimmed = line.trim();
+            for (String key : dateKeywords) {
+                if (trimmed.startsWith(key)) {
+                    Matcher matcher = DATE_PATTERN.matcher(trimmed);
+                    if (matcher.find()) {
+                        String date = matcher.group(1);
+                        if (!isValidDate(date)) {
+                            throw new GeneralException(ErrorStatus.RECEIPT_INVALID_INPUT);
+                        }
+                        return date;
+                    }
+                }
+            }
+        }
+
+        return "찾을 수 없음.";
     }
 
     private boolean isValidDate(String dateStr) {
-        // 형식에 맞는지 검증하고 올바른 날짜를 가지는지 계산
         try {
             String normalized = dateStr.replace(".", "-").replace("/", "-");
             LocalDate.parse(normalized, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -144,4 +187,3 @@ public class OcrService {
         }
     }
 }
-

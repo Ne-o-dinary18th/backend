@@ -25,6 +25,7 @@ public class ReceiptResponse {
         String storeName;
         LocalDate purchaseDate;
         Long totalAmount;
+        String imageUrl;
     }
 
 }

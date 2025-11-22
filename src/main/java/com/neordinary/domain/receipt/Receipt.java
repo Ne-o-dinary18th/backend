@@ -28,6 +28,9 @@ public class Receipt extends BaseEntity {
     @Column
     private Long totalAmount; // 총액
 
+    @Column
+    private String imageUrl;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tags_id")
     private Tag tag;

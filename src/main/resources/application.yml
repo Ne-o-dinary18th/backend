@@ -7,12 +7,19 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update # 초기세팅 이후 update로 변경
+      ddl-auto: create # 초기세팅 이후 update로 변경
     properties:
       hibernate:
         format_sql: true
     show-sql: true
     open-in-view: false
+
+  servlet:
+    multipart:
+      max-file-size: 10MB       # 파일 1개 최대
+      max-request-size: 10MB    # 요청 전체 최대
+
+
 # swagger
 springdoc:
   swagger-ui:

@@ -26,11 +26,14 @@ public class ReceiptQueryServiceImpl implements ReceiptQueryService{
         Receipt receipt = receiptRepository.findById(receiptId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.RECEIPT_NOT_FOUND));
 
+
+
         return ReceiptResponse.ReceiptResponseDTO.builder()
                 .receiptId(receipt.getReceiptId())
                 .storeName(receipt.getStoreName())
                 .purchaseDate(LocalDate.parse(receipt.getPurchaseDate()))
                 .totalAmount(receipt.getTotalAmount())
+                .imageUrl(receipt.getImageUrl())
                 .build();
     }
 

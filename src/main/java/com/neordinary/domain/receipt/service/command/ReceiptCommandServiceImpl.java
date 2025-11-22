@@ -11,8 +11,10 @@ import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.repository.TagRepository;
 import com.neordinary.global.apiPayload.code.status.ErrorStatus;
 import com.neordinary.global.apiPayload.exception.GeneralException;
+import com.neordinary.global.s3.S3Repository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ReceiptCommandServiceImpl implements ReceiptCommandService{
 
+    private final S3Repository s3StorageRepository;
     private final ReceiptRepository receiptRepository;
     private final ReportRepository reportRepository;
     private final TagRepository tagRepository;
@@ -30,7 +33,7 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
      * OCR 문자열 파싱 및 예외 처리
      * */
     @Override
-    public ReceiptResponse.UploadDTO uploadReceipt(Long tagId, String ocrText){
+    public ReceiptResponse.UploadDTO uploadReceipt(Long tagId, String ocrText, MultipartFile image){
         Tag tag = tagRepository.findById(tagId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
 
@@ -41,11 +44,15 @@ public class ReceiptCommandServiceImpl implements ReceiptCommandService{
         Integer totalPrice = Integer.valueOf(result.get(1));
         String purchaseDate = result.get(2);
 
-        // 성공하면 영수증 생성
+        // 미리 생성한 영수증의 ID를 받기 위해 영수증 생성
         Receipt entity = ReceiptConverter.toReceipt(store, purchaseDate, totalPrice, tag);
-        receiptRepository.save(entity);
+        Receipt save = receiptRepository.save(entity);
 
-        return ReceiptConverter.toUploadDTO(entity);
+        // 받은 ID로 S3에 업로드
+        String imageUrl = s3StorageRepository.upload(image, save.getReceiptId());
+        save.setImageUrl(imageUrl);
+
+        return ReceiptConverter.toUploadDTO(save);
     }
 
     /** 영수증 삭제 메소드
