@@ -56,7 +56,7 @@ public class PdfService {
         content.newLineAtOffset(margin, y);
 
         content.showText("보고서 ID: " + report.getReportId()); content.newLine();
-        content.showText("생성일: " + report.getReportDate()); content.newLine();
+        content.showText(report.getReportDate() + "일 보고서"); content.newLine();
         content.showText("관리자: " + report.getManagerName()); content.newLine();
         content.showText("관리 계좌: " + report.getManagerAccount()); content.newLine();
         content.showText("--------------------------------"); content.newLine();
