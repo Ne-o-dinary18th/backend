@@ -10,8 +10,8 @@
 //@AllArgsConstructor
 //public enum ReceiptCode implements BaseCode{
 //
-////    FOUND(HttpStatus.OK, ReasonDTO.builder().build()),
-////    DELETED(HttpStatus.OK, ReasonDTO.builder().build());
+//    FOUND(HttpStatus.OK, ReasonDTO.builder().build()),
+//    DELETED(HttpStatus.OK, ReasonDTO.builder().build());
 //
 //    private final HttpStatus reasonHttpStatus;
 //    private final ReasonDTO reason;

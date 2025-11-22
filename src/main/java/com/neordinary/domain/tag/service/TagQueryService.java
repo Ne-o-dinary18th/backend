@@ -1,5 +1,7 @@
 package com.neordinary.domain.tag.service;
 
+import com.neordinary.domain.receipt.Receipt;
+import com.neordinary.domain.receipt.repository.ReceiptRepository;
 import com.neordinary.domain.tag.Tag;
 import com.neordinary.domain.tag.User;
 import com.neordinary.domain.tag.dto.TagResponseDto;
@@ -15,6 +17,7 @@ import java.util.List;
 public class TagQueryService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
+    private final ReceiptRepository receiptRepository;
 
     public TagResponseDto.TagListDto retrieveAllTags() {
         // find tags
@@ -55,5 +58,41 @@ public class TagQueryService {
                 .tagName(tag.getTitle())
                 .tagUsers(tagUserDtos)
                 .build();
+    }
+
+    public TagResponseDto.TagDetailDto getTagReceipts(Long tagId) {
+        // find tag, users
+        var tag = tagRepository.findById(tagId).orElseThrow();
+        List<User> users = userRepository.findUsersByTag_TagId(tagId);
+        var userAmount = users.size();
+
+        // Todo: 에러 핸들러
+        // find receipts
+        var receipts =  receiptRepository.findReceiptsByTag_TagId(tagId);
+
+        // calculate totalAmount
+        Integer receiptAmount = Math.toIntExact(receipts.stream()
+                .mapToLong(Receipt::getTotalAmount)
+                .sum());
+
+
+        // wrap list
+        List<TagResponseDto.ReceiptDto> receiptDtos = receipts.stream()
+                .map(receipt -> TagResponseDto.ReceiptDto.convertToTagDetail(
+                        receipt.getReceiptId(),
+                        receipt.getStoreName(),
+                        receipt.getPurchaseDate(),
+                        receipt.getTotalAmount()
+                )).toList();
+
+        TagResponseDto.TagDetailDto tagDetailDto = TagResponseDto.TagDetailDto.builder()
+                .tagId(tag.getTagId())
+                .tagName(tag.getTitle())
+                .totalAmount(receiptAmount)
+                .totalUsers(userAmount)
+                .receipts(receiptDtos)
+                .build();
+        return tagDetailDto;
+
     }
 }
