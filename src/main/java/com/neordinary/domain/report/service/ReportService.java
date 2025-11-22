@@ -1,7 +1,7 @@
 package com.neordinary.domain.report.service;
 
 import com.neordinary.domain.receipt.Receipt;
-import com.neordinary.domain.receipt.respository.ReceiptRepository;
+import com.neordinary.domain.receipt.repository.ReceiptRepository;
 import com.neordinary.domain.report.dto.ReportCreateRequest;
 import com.neordinary.domain.report.dto.ReportDetailResponse;
 import com.neordinary.domain.report.dto.ReportReceiptResponse;
