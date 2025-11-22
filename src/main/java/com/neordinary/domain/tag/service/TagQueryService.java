@@ -42,8 +42,8 @@ public class TagQueryService {
 
     public TagUserResponseDto.TagUserListDto getTagUsers(Long tagId) {
         // find tag
-        // Todo: 에러처리
-        var tag = tagRepository.findById(tagId).orElseThrow();
+        var tag = tagRepository.findById(tagId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.TAG_NOT_FOUND));
 
         // find user
         List<User> users = userRepository.findUsersByTag_TagId(tagId);
@@ -92,6 +92,8 @@ public class TagQueryService {
                 .tagId(tag.getTagId())
                 .tagName(tag.getTitle())
                 .totalAmount(receiptAmount)
+                .userName(tag.getManagerName())
+                .userAccount(tag.getManagerAccount())
                 .totalUsers(userAmount)
                 .receipts(receiptDtos)
                 .build();
