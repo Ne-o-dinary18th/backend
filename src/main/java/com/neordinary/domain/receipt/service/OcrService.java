@@ -68,7 +68,11 @@ public class OcrService {
             if (trimmed.startsWith("이용금액") ||
                     trimmed.startsWith("합계 금액") ||
                     trimmed.startsWith("총액") ||
-                    trimmed.startsWith("결제금액")) {
+                    trimmed.startsWith("신용카드") ||
+                    trimmed.startsWith("결제금액") ||
+                    trimmed.startsWith("카드결제") ||
+                    trimmed.startsWith("카 드 결 제") ||
+                    trimmed.startsWith("결제 금액")) {
 
                 Integer amount = extractAmountAsInt(trimmed);
 
