@@ -92,6 +92,8 @@ public class TagQueryService {
                 .tagId(tag.getTagId())
                 .tagName(tag.getTitle())
                 .totalAmount(receiptAmount)
+                .userName(tag.getManagerName())
+                .userAccount(tag.getManagerAccount())
                 .totalUsers(userAmount)
                 .receipts(receiptDtos)
                 .build();
