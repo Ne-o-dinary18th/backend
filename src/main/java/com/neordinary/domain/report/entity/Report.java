@@ -32,11 +32,6 @@ public class Report extends BaseEntity {
     private LocalDate reportDate;
 
     @ManyToMany
-    @JoinTable(
-            name = "report_receipt",   // 새 조인 테이블
-            joinColumns = @JoinColumn(name = "report_id"),
-            inverseJoinColumns = @JoinColumn(name = "receipt_id")
-    )
     private List<Receipt> receipts = new ArrayList<>();
 }
 
