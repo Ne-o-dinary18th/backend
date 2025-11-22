@@ -62,6 +62,8 @@ public class TagResponseDto {
         String tagName;
         Integer totalAmount;
         Integer totalUsers;
+        String userName;
+        String userAccount;
         List<ReceiptDto> receipts;
     }
     @Builder
