@@ -25,19 +25,16 @@ public class ReceiptController {
 
     /**
      * /api/ocr
-     *
+     * OCR 파싱 테스트
      * */
     @PostMapping("/ocr")
-    public ApiResponse<String> ocr(@RequestBody String exampleText) {
+    public ApiResponse<List<String>> ocr(@RequestBody String exampleText) {
         return ApiResponse.onSuccess(ocrService.regularizate(exampleText));
-
     }
-
-
 
     /**
      * /api/receipts/upload
-     * 영수증 생성하기 API
+     * 영수증 생성 API
      *
      */
     @PostMapping("/receipts/upload")
@@ -59,7 +56,6 @@ public class ReceiptController {
      * 영수증 상세페이지 조회(리스트에서 클릭시)
      *
      */
-
     @GetMapping("/receipts/{receiptId}")
     @Operation(summary = "영수증 상세 내용 조회", description = "단일 영수증의 상세 내용을 조회합니다.")
     @ApiResponses({
