@@ -11,13 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api")
+@RestController("/api")
 @RequiredArgsConstructor
 public class ReceiptController {
 
     private final ReceiptCommandService receiptCommandService;
-    private final ReceiptQueryService receiptQueryService;
+    private ReceiptQueryService receiptQueryService;
 
     /**
      * /api/receipts/upload
@@ -52,7 +51,7 @@ public class ReceiptController {
      */
     @GetMapping("/receipts/all")
     public ApiResponse<Long> getTotalAmount(
-            @RequestParam List<Long> receiptIds
+            @PathVariable List<Long> receiptIds
     ){
         return ApiResponse.onSuccess(receiptQueryService.getTotalAmount(receiptIds));
     }
