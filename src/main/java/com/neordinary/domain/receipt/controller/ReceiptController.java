@@ -24,15 +24,6 @@ public class ReceiptController {
     private final OcrService ocrService;
 
     /**
-     * /api/ocr
-     * OCR 파싱 테스트
-     * */
-    @PostMapping("/ocr")
-    public ApiResponse<List<String>> ocr(@RequestBody String exampleText) {
-        return ApiResponse.onSuccess(ocrService.regularizate(exampleText));
-    }
-
-    /**
      * /api/receipts/upload
      * 영수증 생성 API
      *
